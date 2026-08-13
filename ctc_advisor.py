@@ -27,10 +27,21 @@ from ctc_history import deadline_radar
 from ctc_access import generate_access_list, personalize, context_from_db
 from ctc_payoff import payoff_plan
 import ctc_rates as R
-import ctc_rates_watch as ratewatch
+def _load_env_file():
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ[k.strip()] = v.strip().strip("'\"")
+
+_load_env_file()
 
 CLAUDE_MODEL = "claude-3-5-sonnet-20241022"
 GEMINI_MODEL = "gemini-1.5-flash"
+
 
 # ---------------------------------------------------------------------------
 # Verified Link & Access Catalog (Banks, Credit Unions, OSAP, Money Stack)

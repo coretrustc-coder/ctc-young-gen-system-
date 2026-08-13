@@ -24,3 +24,8 @@ venv.bak/
 .idea/
 *.swp
 *.swo
+
+# Environment Variables & API Keys
+.env
+*.env
+
