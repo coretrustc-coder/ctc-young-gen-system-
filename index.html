@@ -308,6 +308,80 @@
   .profile-actions { display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border); }
   .profile-btn-open { padding:5px 12px;background:rgba(62,198,208,0.1);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--cyan-l);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s; }
   .profile-btn-open:hover { background:rgba(62,198,208,0.18);border-color:var(--cyan); }
+
+  /* HOVER GLOW MICRO-INTERACTIONS */
+  .card, .metric, .stack-step, .letter-card, .metric-value, .hero-chip, .qprompt {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .card:hover {
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 22px rgba(62, 198, 208, 0.3) !important;
+    transform: translateY(-2px);
+  }
+
+  .metric:hover {
+    border-color: var(--green-l) !important;
+    box-shadow: 0 0 22px rgba(29, 158, 117, 0.35) !important;
+    transform: translateY(-2px);
+  }
+
+  .stack-step:hover {
+    border-color: var(--cyan-l) !important;
+    box-shadow: 0 0 18px rgba(62, 198, 208, 0.22) !important;
+    background: rgba(62, 198, 208, 0.08) !important;
+    transform: translateX(4px);
+  }
+
+  .letter-card:hover {
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 20px rgba(62, 198, 208, 0.25) !important;
+  }
+
+  /* GLOWING LINKS & BANK BUTTONS */
+  a[target="_blank"], .copy-btn, .hero-chip, .qprompt, .btn {
+    transition: all 0.2s ease !important;
+  }
+
+  a[target="_blank"]:hover {
+    color: var(--cyan-l) !important;
+    text-shadow: 0 0 12px rgba(62, 198, 208, 0.8) !important;
+  }
+
+  .tbl tr:hover {
+    box-shadow: 0 0 15px rgba(62, 198, 208, 0.15) !important;
+  }
+
+  /* FLOATING HOVER LINK TOOLTIP ENGINE */
+  .glow-tooltip {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--bg-1);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(62, 198, 208, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text-1);
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  .glow-tooltip-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glow-tooltip-wrap:hover .glow-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
 </style>
 </head>
 <body>
@@ -414,7 +488,7 @@
         <span id="auth-state" style="font-size:10px;color:var(--cyan-l);margin-left:8px;"></span>
         <span class="pill pill-cyan">● System Live</span>
         <button class="profile-btn-open" onclick="openProfile()">⊕ Student Profile</button>
-        <button class="btn btn-ghost" onclick="showPanel('services')">Book a Call</button>
+        <button class="btn btn-ghost" onclick="location.href='admin.html'" style="border-color:var(--cyan);color:var(--cyan-l);">🛡 Admin Portal</button> <button class="btn btn-ghost" onclick="showPanel('services')">Book a Call</button>
         <button class="btn btn-cyan" onclick="showPanel('dispute')">Generate Letter</button>
       </div>
     </div>
@@ -1756,7 +1830,81 @@ function downloadPlan() {
     pre{white-space:pre-wrap;font-family:inherit;font-size:14px;}
     .foot{margin-top:28px;padding-top:12px;border-top:1px solid #dfe6e9;font-size:11px;color:#5b6b73;}
     @media print{.noprint{display:none;}}
-  </style></head><body>
+  
+  /* HOVER GLOW MICRO-INTERACTIONS */
+  .card, .metric, .stack-step, .letter-card, .metric-value, .hero-chip, .qprompt {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .card:hover {
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 22px rgba(62, 198, 208, 0.3) !important;
+    transform: translateY(-2px);
+  }
+
+  .metric:hover {
+    border-color: var(--green-l) !important;
+    box-shadow: 0 0 22px rgba(29, 158, 117, 0.35) !important;
+    transform: translateY(-2px);
+  }
+
+  .stack-step:hover {
+    border-color: var(--cyan-l) !important;
+    box-shadow: 0 0 18px rgba(62, 198, 208, 0.22) !important;
+    background: rgba(62, 198, 208, 0.08) !important;
+    transform: translateX(4px);
+  }
+
+  .letter-card:hover {
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 20px rgba(62, 198, 208, 0.25) !important;
+  }
+
+  /* GLOWING LINKS & BANK BUTTONS */
+  a[target="_blank"], .copy-btn, .hero-chip, .qprompt, .btn {
+    transition: all 0.2s ease !important;
+  }
+
+  a[target="_blank"]:hover {
+    color: var(--cyan-l) !important;
+    text-shadow: 0 0 12px rgba(62, 198, 208, 0.8) !important;
+  }
+
+  .tbl tr:hover {
+    box-shadow: 0 0 15px rgba(62, 198, 208, 0.15) !important;
+  }
+
+  /* FLOATING HOVER LINK TOOLTIP ENGINE */
+  .glow-tooltip {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--bg-1);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(62, 198, 208, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text-1);
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  .glow-tooltip-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glow-tooltip-wrap:hover .glow-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style></head><body>
     <div class="head"><div class="mark">CT</div><div><h1>My Funding Plan</h1><small>CoreTrust Young Gen · generated ${new Date().toLocaleDateString('en-CA')}</small></div></div>
     <pre>${esc}</pre>
     <div class="foot">CoreTrust Consulting · Brampton, ON · Educational and strategic guidance only — not legal or financial advice. No guaranteed outcomes; programs subject to eligibility. coretrustc@gmail.com</div>
