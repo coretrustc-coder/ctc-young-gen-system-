@@ -1,0 +1,62 @@
+{
+  "_comment": "EXAMPLE DATA ONLY. Replace every value with your own real, verified numbers from your statements, CRA MyAccount, pay stubs, and credit dashboards, then import via CLI menu 13 -> g.",
+  "personal_accounts": [
+    { "id": "chq_main", "institution": "TD", "account_type": "Chequing", "balance": 3200.00, "liquid": true },
+    { "id": "sav_hisa", "institution": "EQ Bank", "account_type": "Savings", "balance": 18000.00, "liquid": true }
+  ],
+  "credit_cards": [
+    {
+      "id": "td_visa", "institution": "TD", "secured": false,
+      "limit_amt": 5000.00, "current_balance": 250.00, "statement_date": "2026-07-14",
+      "utilization_history": [0.08, 0.05, 0.05], "last_limit_increase": "2026-01-10",
+      "min_payment": 10.00, "apr": 0.1999
+    },
+    {
+      "id": "capone_mc", "institution": "Capital One", "secured": false,
+      "limit_amt": 1500.00, "current_balance": 900.00, "statement_date": "2026-07-10",
+      "utilization_history": [0.55, 0.60, 0.60], "last_limit_increase": "2025-10-15",
+      "min_payment": 27.00, "apr": 0.2299
+    }
+  ],
+  "installment_debts": [
+    { "id": "auto_loan", "lender": "TD Auto Finance", "debt_type": "Auto",
+      "balance": 18000.00, "monthly_payment": 420.00, "interest_rate": 7.2 }
+  ],
+  "portfolios": [
+    { "portfolio_type": "TFSA", "contribution_limit": 7000.00, "contributed_ytd": 2000.00, "last_contribution": "2026-06-01", "market_value": 22000.00 },
+    { "portfolio_type": "RRSP", "contribution_limit": 15000.00, "contributed_ytd": 3000.00, "last_contribution": "2026-03-01", "market_value": 41000.00 },
+    { "portfolio_type": "FHSA", "contribution_limit": 8000.00, "contributed_ytd": 0.00, "last_contribution": "", "market_value": 0.00 }
+  ],
+  "income": [
+    { "source": "TD Payroll (T4)", "gross_monthly": 6000.00, "net_monthly": 4300.00, "next_pay_date": "2026-07-31" }
+  ],
+  "business_accounts": [
+    {
+      "institution": "EQ Bank", "account_type": "Business Operating", "balance": 15250.00,
+      "transaction_history": [
+        { "date": "2026-07-01", "amount": 12000.00, "type": "credit" },
+        { "date": "2026-07-03", "amount": 150.00, "type": "debit" },
+        { "date": "2026-07-05", "amount": 1100.00, "type": "debit" },
+        { "date": "2026-07-10", "amount": 8000.00, "type": "credit" },
+        { "date": "2026-07-12", "amount": 3500.00, "type": "debit" }
+      ]
+    }
+  ],
+  "assets": [
+    { "id": "condo", "name": "Brampton condo", "category": "Real Estate", "market_value": 520000.00, "associated_debt": 340000.00, "liquid": false },
+    { "id": "car", "name": "2022 vehicle", "category": "Vehicle", "market_value": 24000.00, "associated_debt": 0.00, "liquid": false },
+    { "id": "btc", "name": "Bitcoin holdings", "category": "Crypto", "market_value": 15000.00, "associated_debt": 0.00, "liquid": true }
+  ],
+  "credit_report_entries": [
+    { "id": "old_collection_1", "bureau": "Equifax", "creditor": "Example Collections Inc",
+      "entry_type": "collection", "status": "Collection", "reported_balance": 820.00, "date_of_last_activity": "2018-02-11" },
+    { "id": "late_2024", "bureau": "TransUnion", "creditor": "Example Card Co",
+      "entry_type": "late_payment", "status": "Open", "reported_balance": 0.00, "date_of_last_activity": "2024-03-01" }
+  ],
+  "user_profile": {
+    "equifax_score": 712, "transunion_score": 705, "monthly_housing_cost": 2100.00,
+    "time_in_business_years": 1.5, "business_revenue_monthly": 9000.00,
+    "business_bank_months": 8, "monthly_expenses": 3800.00,
+    "us_bank_account": false, "us_tax_id": false, "us_address": false
+  }
+}

@@ -1,0 +1,26 @@
+# Databases & user data
+*.db
+*.sqlite
+*.sqlite3
+coretrust_system.db
+dashboard.html
+sample_profile_custom.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
