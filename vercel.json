@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/*.js", "use": "@vercel/node" }
-  ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/admin.html", "dest": "/admin.html" },
+    { "src": "/CoreTrust-Core", "dest": "/CoreTrust-Core.html" },
+    { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
