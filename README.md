@@ -1,15 +1,27 @@
-# CoreTrust System (CTC) — Personal Financial Tracker & Optimizer
+# CoreTrust System (CTC) — Personal Financial Tracker & Young Gen Advisor
 
-A local, single-user tool for a Canadian consumer (Ontario / GTA) to track your
-money, see your whole financial picture, understand your credit position, get
-funding-ready, and plan tax and payroll. It runs entirely on your machine;
-nothing is transmitted anywhere.
+[![Live App](https://img.shields.io/badge/Live_App-coretrust--young--gen--advisor.vercel.app-3EC6D0?style=for-the-badge&logo=vercel)](https://coretrust-young-gen-advisor.vercel.app/)
+[![Dual AI Engine](https://img.shields.io/badge/AI_Engine-Google_Gemini_%2B_Anthropic_Claude-1D9E75?style=for-the-badge)](https://github.com/coretrustc-coder/ctc-young-gen-system-)
+[![License](https://img.shields.io/badge/Compliance-CASL_%7C_PIPEDA_%7C_FCAC-7F77DD?style=for-the-badge)](https://github.com/coretrustc-coder/ctc-young-gen-system-)
 
-**Personal-finance and consumer-rights education tool. Not legal, tax, or
-investment advice, not a "credit repair" service, and not a way to game banks or
-bureaus.** Enter only your own real, verified figures.
+## 🌐 Live Web Application & Dashboard Links
+
+- **Production Live App (Vercel)**: [https://coretrust-young-gen-advisor.vercel.app/](https://coretrust-young-gen-advisor.vercel.app/)
+- **Local Live Dashboard**: `http://127.0.0.1:8799/` (run `python3 ctc_serve.py`)
+
+A comprehensive financial intelligence engine and advisor for Canadian consumers and youth (18–25). Tracks net worth, credit scores, OSAP grants/loans, funding roadmaps, legal disputes (Ontario Consumer Reporting Act), side hustles, and verified bank/credit union products.
+
+**Personal-finance and consumer-rights education tool. Not legal, tax, or investment advice, not a "credit repair" service, and not a way to game banks or bureaus.** Enter only your own real, verified figures.
+
+## 🚀 Dual-Engine AI Architecture
+
+This repository features a **Hybrid Multi-Model Router**:
+1. **Google Antigravity / Gemini 1.5**: Lightning-fast sub-300ms chat streaming, multimodal document/statement OCR, and product discovery.
+2. **Anthropic Claude 3.5 Sonnet**: High-precision legal dispute letter synthesis, compliance checking, and deep financial auditing.
+3. **Smart Link Engine**: Delivers direct action links & metadata cards for Canadian Banks, Credit Unions, OSAP, and Scholarships.
 
 ## Modules
+
 
 | File | Purpose |
 |---|---|

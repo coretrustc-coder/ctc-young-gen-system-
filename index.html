@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTC Young Gen Bot — CoreTrust Consulting</title>
+<style>
+  :root {
+    --bg-0: #060A0F;
+    --bg-1: #09101A;
+    --bg-2: #0D1421;
+    --bg-3: #121B2B;
+    --bg-4: #172033;
+    --border: rgba(62,198,208,0.1);
+    --border-2: rgba(62,198,208,0.18);
+    --border-3: rgba(62,198,208,0.28);
+    --text-1: #DFF0F4;
+    --text-2: #8AAAB5;
+    --text-3: #4E6A78;
+    --green: #1D9E75;
+    --green-l: #5DCAA5;
+    --green-d: #0F6E56;
+    --cyan: #3EC6D0;
+    --cyan-l: #7DDDE5;
+    --cyan-d: #1A8A94;
+    --red: #E24B4A;
+    --amber: #EF9F27;
+    --purple: #7F77DD;
+    --purple-l: #AFA9EC;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'SF Mono', 'Fira Code', monospace;
+    --radius: 8px;
+    --radius-sm: 5px;
+    --glow-green: 0 0 20px rgba(29,158,117,0.2);
+    --glow-cyan: 0 0 20px rgba(62,198,208,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg-0); color: var(--text-1); font-family: var(--font); font-size: 13px; line-height: 1.5; }
+
+  /* BG GRID */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(62,198,208,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(62,198,208,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* LAYOUT */
+  .shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+  .sidebar { width: 230px; min-width: 230px; background: var(--bg-1); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 54px; min-height: 54px; background: rgba(9,16,26,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 12px; justify-content: space-between; backdrop-filter: blur(12px); }
+  .content { flex: 1; overflow-y: auto; padding: 20px; }
+
+  /* LOGO */
+  .logo-wrap { padding: 18px 16px 14px; border-bottom: 1px solid var(--border); }
+  .logo-block { display: flex; align-items: center; gap: 11px; }
+  .logo-hex { flex-shrink: 0; }
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-name { font-size: 13px; font-weight: 700; color: var(--text-1); letter-spacing: 0.02em; }
+  .logo-name span { color: var(--cyan); }
+  .logo-sub { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+
+  /* SIDEBAR NAV */
+  .nav-section { padding: 10px 10px 4px; }
+  .nav-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); padding: 0 6px; margin-bottom: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text-2); font-size: 12px; transition: all 0.15s; user-select: none; border-left: 2px solid transparent; }
+  .nav-item:hover { background: rgba(62,198,208,0.05); color: var(--text-1); border-left-color: rgba(62,198,208,0.2); }
+  .nav-item.active { background: rgba(62,198,208,0.08); color: var(--cyan-l); border-left-color: var(--cyan); }
+  .nav-item .nav-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--bg-4); flex-shrink: 0; transition: background 0.15s; }
+  .nav-item.active .nav-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .nav-divider { height: 1px; background: var(--border); margin: 8px 10px; }
+
+  /* TOPBAR */
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .page-title { font-size: 14px; font-weight: 600; color: var(--text-1); }
+  .page-sub { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-cyan { background: var(--cyan); color: #060A0F; font-weight: 600; }
+  .btn-cyan:hover { background: var(--cyan-l); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { background: var(--green-l); color: var(--bg-0); }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border-2); }
+  .btn-ghost:hover { background: rgba(62,198,208,0.06); color: var(--text-1); border-color: var(--border-3); }
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+  .pill-green { background: rgba(29,158,117,0.15); color: var(--green-l); border: 1px solid rgba(29,158,117,0.25); }
+  .pill-cyan { background: rgba(62,198,208,0.12); color: var(--cyan-l); border: 1px solid rgba(62,198,208,0.22); }
+  .pill-amber { background: rgba(239,159,39,0.15); color: var(--amber); }
+  .pill-red { background: rgba(226,75,74,0.15); color: var(--red); }
+  .pill-purple { background: rgba(127,119,221,0.15); color: var(--purple-l); }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.2s ease; }
+
+  /* CARDS */
+  .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--text-1); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .ct-pill { margin-left: auto; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+
+  /* METRIC TILES */
+  .metric { background: var(--bg-2); border-radius: var(--radius-sm); padding: 13px 15px; border: 1px solid var(--border); }
+  .metric-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 5px; }
+  .metric-value { font-size: 22px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+  .metric-sub { font-size: 10px; color: var(--text-3); margin-top: 4px; }
+  .green { color: var(--green-l); }
+  .cyan { color: var(--cyan-l); }
+  .amber { color: var(--amber); }
+  .red { color: var(--red); }
+  .purple { color: var(--purple-l); }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 12px; padding-bottom: 18px; position: relative; }
+  .tl-left { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+  .tl-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--cyan); background: var(--bg-1); flex-shrink: 0; margin-top: 3px; }
+  .tl-dot.done { background: var(--cyan); box-shadow: 0 0 8px var(--cyan-d); }
+  .tl-dot.locked { border-color: var(--border-2); }
+  .tl-line { width: 1px; background: var(--border); flex: 1; margin-top: 4px; }
+  .tl-body { flex: 1; }
+  .tl-age { font-size: 10px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .tl-title { font-size: 12px; font-weight: 600; color: var(--text-1); margin-bottom: 5px; }
+  .tl-items { list-style: none; }
+  .tl-items li { font-size: 11px; color: var(--text-2); padding: 2px 0; display: flex; align-items: flex-start; gap: 6px; }
+  .tl-items li::before { content: '→'; color: var(--green); font-size: 10px; margin-top: 2px; flex-shrink: 0; }
+  .tl-score { display: inline-flex; align-items: center; gap: 4px; background: rgba(62,198,208,0.08); color: var(--cyan-l); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 3px; margin-bottom: 6px; border: 1px solid rgba(62,198,208,0.15); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .tbl th { text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 8px 8px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(62,198,208,0.03); }
+  .tbl .bold { color: var(--text-1); font-weight: 500; }
+
+  /* TAGS */
+  .tag { display: inline-block; font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+  .tag-green { background: rgba(29,158,117,0.15); color: var(--green-l); }
+  .tag-cyan { background: rgba(62,198,208,0.12); color: var(--cyan-l); }
+  .tag-amber { background: rgba(239,159,39,0.15); color: var(--amber); }
+  .tag-red { background: rgba(226,75,74,0.15); color: var(--red); }
+  .tag-purple { background: rgba(127,119,221,0.15); color: var(--purple-l); }
+  .tag-neutral { background: var(--bg-4); color: var(--text-2); }
+
+  /* DISPUTE LETTERS */
+  .letter-card { background: var(--bg-2); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; }
+  .letter-header { padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.12s; }
+  .letter-header:hover { background: rgba(62,198,208,0.05); }
+  .letter-title { font-size: 12px; font-weight: 500; color: var(--text-1); }
+  .letter-body { padding: 14px; border-top: 1px solid var(--border); display: none; }
+  .letter-body.open { display: block; }
+  .letter-text { font-family: var(--mono); font-size: 10px; color: var(--text-2); line-height: 1.9; white-space: pre-wrap; background: var(--bg-1); border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--border); max-height: 320px; overflow-y: auto; }
+  .copy-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; padding: 5px 11px; background: var(--bg-3); border: 1px solid var(--border-2); border-radius: var(--radius-sm); color: var(--text-2); font-size: 10px; cursor: pointer; transition: all 0.12s; }
+  .copy-btn:hover { color: var(--cyan-l); border-color: var(--cyan); }
+
+  /* CHAT BOT */
+  .chat-panel { display: flex; flex-direction: column; height: calc(100vh - 54px); }
+
+  /* HERO (shown when chat is empty) */
+  .chat-hero {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px 20px; position: relative; overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(62,198,208,0.07) 0%, rgba(6,10,15,0) 70%);
+  }
+  .chat-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 80%, rgba(29,158,117,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border-3);
+    background: rgba(62,198,208,0.06); color: var(--cyan); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.04em; margin-bottom: 28px;
+  }
+  .hero-badge::before { content: '●'; font-size: 7px; color: var(--cyan); animation: pulse-dot 2s infinite; }
+  .hero-h1 { font-size: 54px; font-weight: 700; line-height: 1.05; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 10px; }
+  .hero-h1 .accent { color: var(--cyan); }
+  .hero-h1 .accent-g { color: var(--green-l); }
+  .hero-sub { font-size: 16px; color: var(--text-2); max-width: 480px; line-height: 1.6; margin-bottom: 36px; }
+  .hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 600px; }
+  .hero-chip {
+    padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    background: rgba(62,198,208,0.06); border: 1px solid var(--border-2);
+    color: var(--text-2); cursor: pointer; transition: all 0.15s;
+  }
+  .hero-chip:hover { background: rgba(62,198,208,0.12); border-color: var(--cyan); color: var(--cyan-l); transform: translateY(-1px); }
+
+  .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { display: flex; gap: 10px; max-width: 800px; }
+  .msg.user { flex-direction: row-reverse; margin-left: auto; }
+  .msg-avatar { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .msg-avatar.bot { background: linear-gradient(135deg, var(--cyan-d), var(--green-d)); color: #fff; box-shadow: var(--glow-cyan); }
+  .msg-avatar.user { background: var(--bg-4); color: var(--text-2); border: 1px solid var(--border); }
+  .msg-bubble { background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; border-top-left-radius: 3px; padding: 11px 15px; font-size: 12px; line-height: 1.65; color: var(--text-1); max-width: 640px; }
+  .msg.user .msg-bubble { background: rgba(62,198,208,0.07); border-color: rgba(62,198,208,0.18); border-top-left-radius: 10px; border-top-right-radius: 3px; }
+  .msg-time { font-size: 9px; color: var(--text-3); margin-top: 4px; }
+  .msg .msg-time { text-align: left; }
+  .msg.user .msg-time { text-align: right; }
+  .chat-input-area { padding: 14px 20px; border-top: 1px solid var(--border); background: rgba(9,16,26,0.9); backdrop-filter: blur(8px); }
+  .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+  .chat-input { flex: 1; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 10px 14px; color: var(--text-1); font-family: var(--font); font-size: 13px; outline: none; resize: none; min-height: 42px; max-height: 120px; transition: border-color 0.15s; }
+  .chat-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(62,198,208,0.08); }
+  .chat-input::placeholder { color: var(--text-3); }
+  .send-btn { width: 40px; height: 40px; background: var(--cyan); border: none; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+  .send-btn:hover { background: var(--cyan-l); box-shadow: var(--glow-cyan); }
+  .quick-prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .qprompt { padding: 5px 11px; background: var(--bg-3); border: 1px solid var(--border); border-radius: 20px; font-size: 11px; color: var(--text-2); cursor: pointer; transition: all 0.12s; }
+  .qprompt:hover { border-color: var(--cyan); color: var(--cyan-l); background: rgba(62,198,208,0.06); }
+
+  /* STACK STEPS */
+  .stack-step { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--bg-3); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 8px; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--cyan-d); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-body { flex: 1; }
+  .step-title { font-size: 12px; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+  .step-detail { font-size: 11px; color: var(--text-2); line-height: 1.55; }
+  .step-meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+  /* PROGRESS BAR */
+  .prog-wrap { margin-bottom: 10px; }
+  .prog-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+  .prog-bar { height: 4px; background: var(--bg-4); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--green-d), var(--cyan)); }
+
+  /* COMPLIANCE */
+  .rule-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-icon { width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; margin-top: 1px; }
+  .rule-icon.block { background: rgba(226,75,74,0.15); color: var(--red); }
+  .rule-icon.ok { background: rgba(62,198,208,0.12); color: var(--cyan-l); }
+  .rule-text { color: var(--text-2); line-height: 1.5; }
+  .rule-text strong { color: var(--text-1); }
+
+  /* OSAP CALC */
+  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-label { color: var(--text-2); }
+  .calc-value { font-weight: 600; font-family: var(--mono); }
+
+  /* INFO ROWS */
+  .info-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; font-size: 11px; border-bottom: 1px solid var(--border); }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--text-3); width: 150px; flex-shrink: 0; }
+  .info-val { color: var(--text-1); }
+
+  /* SECTION HEADER */
+  .section-header { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .section-header::before { content: ''; width: 3px; height: 12px; background: var(--cyan); border-radius: 2px; display: inline-block; }
+
+  /* DISCLAIMER */
+  .disclaimer-box { background: rgba(239,159,39,0.04); border: 1px solid rgba(239,159,39,0.15); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 10px; color: var(--text-3); line-height: 1.6; margin-top: 16px; }
+
+  /* SIDEBAR FOOTER */
+  .sidebar-footer { padding: 14px 16px; margin-top: auto; border-top: 1px solid var(--border); }
+  .compliance-badge { display: flex; align-items: center; gap: 6px; font-size: 9px; color: var(--text-3); }
+  .compliance-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); flex-shrink: 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .hero-h1 { font-size: 34px; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .typing-dot { display: inline-block; width: 5px; height: 5px; background: var(--cyan); border-radius: 50%; animation: pulse 1.2s infinite; margin: 0 1px; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  /* PROFILE PANEL */
+  .profile-overlay { position:fixed;inset:0;background:rgba(6,10,15,0.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center; }
+  .profile-overlay.open { display:flex; }
+  .profile-modal { background:var(--bg-1);border:1px solid var(--border-2);border-radius:12px;width:680px;max-width:95vw;max-height:90vh;overflow-y:auto;padding:24px; }
+  .profile-modal h2 { font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:4px; }
+  .profile-modal p { font-size:11px;color:var(--text-3);margin-bottom:20px; }
+  .profile-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px; }
+  .profile-field { display:flex;flex-direction:column;gap:4px; }
+  .profile-field label { font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em; }
+  .profile-field input, .profile-field select, .profile-field textarea {
+    background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);
+    padding:8px 10px;color:var(--text-1);font-size:12px;font-family:var(--font);outline:none;
+    transition:border-color 0.15s;
+  }
+  .profile-field input:focus, .profile-field select:focus { border-color:var(--cyan); }
+  .profile-field select option { background:var(--bg-2); }
+  .profile-radio { display:flex;gap:8px;flex-wrap:wrap; }
+  .profile-radio label { display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2);cursor:pointer; }
+  .profile-radio input[type=radio] { accent-color:var(--cyan); }
+  .upload-zone { border:1px dashed var(--border-2);border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--bg-3); }
+  .upload-zone:hover { border-color:var(--cyan);background:rgba(62,198,208,0.04); }
+  .upload-zone p { font-size:11px;color:var(--text-3);margin:0; }
+  .profile-actions { display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border); }
+  .profile-btn-open { padding:5px 12px;background:rgba(62,198,208,0.1);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--cyan-l);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s; }
+  .profile-btn-open:hover { background:rgba(62,198,208,0.18);border-color:var(--cyan); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-block">
+        <!-- CTC Hexagon Matrix Logo -->
+        <svg class="logo-hex" width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Hexagon -->
+          <polygon points="22,3 38,12.5 38,31.5 22,41 6,31.5 6,12.5"
+            fill="rgba(62,198,208,0.06)" stroke="#3EC6D0" stroke-width="1.2" filter="url(#glow)"/>
+          <!-- Node circles at vertices -->
+          <circle cx="22" cy="3" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <circle cx="38" cy="12.5" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <circle cx="38" cy="31.5" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <circle cx="22" cy="41" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <circle cx="6" cy="31.5" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <circle cx="6" cy="12.5" r="2" fill="#3EC6D0" opacity="0.9"/>
+          <!-- Inner bracket lines -->
+          <line x1="14" y1="8.5" x2="14" y2="35.5" stroke="#3EC6D0" stroke-width="0.8" opacity="0.4"/>
+          <line x1="30" y1="8.5" x2="30" y2="35.5" stroke="#3EC6D0" stroke-width="0.8" opacity="0.4"/>
+          <!-- CTC text -->
+          <text x="22" y="25" text-anchor="middle" fill="#3EC6D0"
+            font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+            font-size="10" font-weight="700" letter-spacing="0.5">CTC</text>
+        </svg>
+        <div class="logo-text">
+          <div class="logo-name">CoreTrust <span>Consulting</span></div>
+          <div class="logo-sub">Young Gen System</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">AI Advisor</div>
+      <div class="nav-item active" onclick="showPanel('chat')">
+        <div class="nav-dot"></div> Chat Advisor
+      </div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-section">
+      <div class="nav-label">Student Module</div>
+      <div class="nav-item" onclick="showPanel('overview')"><div class="nav-dot"></div> Overview & Reality Check</div>
+      <div class="nav-item" onclick="showPanel('osap')"><div class="nav-dot"></div> OSAP Strategy</div>
+      <div class="nav-item" onclick="showPanel('foundation')"><div class="nav-dot"></div> Credit Foundation</div>
+      <div class="nav-item" onclick="showPanel('roadmap')"><div class="nav-dot"></div> Year-by-Year Roadmap</div>
+      <div class="nav-item" onclick="showPanel('hustle')"><div class="nav-dot"></div> Side Hustle System</div>
+      <div class="nav-item" onclick="showPanel('funding')"><div class="nav-dot"></div> Free Money Stack</div>
+      <div class="nav-item" onclick="showPanel('trades')"><div class="nav-dot"></div> Trades Path</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-section">
+      <div class="nav-label">Credit Tools</div>
+      <div class="nav-item" onclick="showPanel('dispute')"><div class="nav-dot"></div> Dispute Letters</div>
+      <div class="nav-item" onclick="showPanel('cards')"><div class="nav-dot"></div> Card & Bank Matrix</div>
+      <div class="nav-item" onclick="showPanel('bonuses')"><div class="nav-dot"></div> Bonus Stacking</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-section">
+      <div class="nav-label">CoreTrust</div>
+      <div class="nav-item" onclick="showPanel('services')"><div class="nav-dot"></div> Pricing & Services</div>
+      <div class="nav-item" onclick="showPanel('compliance')"><div class="nav-dot"></div> Compliance Rules</div>
+      <div class="nav-item" onclick="window.open('/CoreTrust_YoungGen_Guide.html','_blank')"><div class="nav-dot"></div> 📥 Quick Start Guide (PDF)</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="compliance-badge">
+        <div class="compliance-dot"></div>
+        CASL · PIPEDA · FCAC Compliant
+      </div>
+      <div style="font-size:9px;color:var(--text-3);margin-top:6px;line-height:1.6;">Brampton, ON · coretrustc@gmail.com</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="page-title" id="page-title">Young Gen AI Advisor</div>
+          <div class="page-sub" id="page-sub">Ask anything about credit, OSAP, scholarships, or funding</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="auth-btn" onclick="signIn()" style="font-size:11px;padding:6px 10px;border-radius:8px;background:var(--cyan);color:#001;border:none;cursor:pointer;">Sign in</button>
+        <span id="auth-state" style="font-size:10px;color:var(--cyan-l);margin-left:8px;"></span>
+        <span class="pill pill-cyan">● System Live</span>
+        <button class="profile-btn-open" onclick="openProfile()">⊕ Student Profile</button>
+        <button class="btn btn-ghost" onclick="showPanel('services')">Book a Call</button>
+        <button class="btn btn-cyan" onclick="showPanel('dispute')">Generate Letter</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" id="main-content">
+
+      <!-- CHAT PANEL -->
+      <div class="panel active" id="panel-chat" style="padding:0;height:calc(100vh - 54px);">
+        <div class="chat-panel">
+          <!-- HERO shown before messages -->
+          <div class="chat-hero" id="chat-hero">
+            <div class="hero-badge">Information they never handed you</div>
+            <div class="hero-h1">
+              The playbook exists.<br>
+              <span class="accent">We just put it</span> <span class="accent-g">in your hands.</span>
+            </div>
+            <div class="hero-sub">Free financial information for 18–25 year olds in Canada. Credit, OSAP, bursaries, side income, disputes — explained in plain language. No pitch. No guarantees. Just the information.</div>
+            <div class="hero-chips">
+              <div class="hero-chip" onclick="heroSend('I\'m 18 starting university in September. Where do I start?')">Starting university in September</div>
+              <div class="hero-chip" onclick="heroSend('How do I build credit from zero at 18?')">Build credit from zero</div>
+              <div class="hero-chip" onclick="heroSend('How does the OSAP float strategy work?')">OSAP float strategy</div>
+              <div class="hero-chip" onclick="heroSend('What scholarships and bursaries can I stack?')">Scholarship + bursary stack</div>
+              <div class="hero-chip" onclick="heroSend('I\'m in a trades apprenticeship. What\'s my credit path?')">Trades apprenticeship path</div>
+              <div class="hero-chip" onclick="heroSend('How do I dispute an error on my Equifax report?')">Dispute credit error</div>
+              <div class="hero-chip" onclick="heroSend('What side hustle can I start with zero money?')">Side hustle with $0</div>
+              <div class="hero-chip" onclick="heroSend('I want to start a tutoring business. How do I get my first client?')">Start tutoring business</div>
+              <div class="hero-chip" onclick="heroSend('What side hustle fits my niche as a student?')">Find my niche hustle</div>
+              <div class="hero-chip" onclick="openProfile()">⊕ Set Up My Student Profile</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages" style="display:none;"></div>
+          <div class="chat-input-area">
+            <div class="quick-prompts" id="quick-prompts" style="display:none;">
+              <div class="qprompt" onclick="generateFundingPlan()" style="background:var(--cyan);color:#060A0F;font-weight:600;">📋 Generate my funding plan</div>
+              <div class="qprompt" onclick="runAudit()" style="border:1px solid var(--cyan);color:var(--cyan-l);font-weight:600;">🔍 What am I missing?</div>
+              <div class="qprompt" onclick="showTracker()" style="border:1px solid var(--green);color:var(--green-l);font-weight:600;">📌 My applications</div>
+              <div class="qprompt" onclick="downloadPlan()">⬇ Download plan (PDF)</div>
+              <div class="qprompt" onclick="sendQuick('How do I use the statement date trick?')">Statement date trick</div>
+              <div class="qprompt" onclick="sendQuick('What\'s the OSAP float strategy?')">OSAP float</div>
+              <div class="qprompt" onclick="sendQuick('How do I dispute an error on my credit report?')">Dispute error</div>
+              <div class="qprompt" onclick="sendQuick('What bank bonuses can I stack?')">Bank bonuses</div>
+            </div>
+            <div class="chat-input-row">
+              <textarea class="chat-input" id="chat-input" placeholder="Ask about credit, OSAP, scholarships, side hustles, disputes..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+              <button class="send-btn" onclick="sendMessage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#060A0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW PANEL -->
+      <div class="panel" id="panel-overview">
+        <div class="section-header">2026 Reality Check</div>
+        <div class="grid-4">
+          <div class="metric"><div class="metric-label">OSAP Grant Portion</div><div class="metric-value red">25%</div><div class="metric-sub">Was 85% before Fall 2026</div></div>
+          <div class="metric"><div class="metric-label">OSAP Loan Portion</div><div class="metric-value amber">75%</div><div class="metric-sub">Minimum — repayable</div></div>
+          <div class="metric"><div class="metric-label">Avg Grad Debt</div><div class="metric-value red">$45–50K</div><div class="metric-sub">Projected under new 2026 structure</div></div>
+          <div class="metric"><div class="metric-label">Triple Zero Risk</div><div class="metric-value purple">HIGH</div><div class="metric-sub">Debt + no credit + no assets</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">What changed in 2026</div>
+            <div class="info-row"><div class="info-key">Grant structure</div><div class="info-val red">85% grants → 25% grants. Major reversal.</div></div>
+            <div class="info-row"><div class="info-key">Loan structure</div><div class="info-val">15% loans → 75% loans minimum</div></div>
+            <div class="info-row"><div class="info-key">Private career colleges</div><div class="info-val red">Zero grants. 100% loans.</div></div>
+            <div class="info-row"><div class="info-key">Tuition freeze</div><div class="info-val red">Dead. 2% annual increase begins Sept 2026</div></div>
+            <div class="info-row"><div class="info-key">Grace period</div><div class="info-val green">6 months post-graduation still intact</div></div>
+            <div class="info-row"><div class="info-key">RAP</div><div class="info-val green">Repayment Assistance Plan still available</div></div>
+            <div class="info-row"><div class="info-key">Student Access Guarantee</div><div class="info-val green">Enhanced SAG — low-income students: institution must cover gap between OSAP and tuition + fees. Contact your school's financial aid office. Takes effect Fall 2026.</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">The Counter-Play</div>
+            <div class="stack-step" style="margin-bottom:8px;">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">Start credit at 18 — not 22</div>
+                <div class="step-detail">Credit age is 15% of your score. Every month you wait is a month you can never recover. Most Canadians wait until 20–22. Don't.</div>
+              </div>
+            </div>
+            <div class="stack-step" style="margin-bottom:8px;">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">Deploy OSAP float — don't spend it</div>
+                <div class="step-detail">The leftover after tuition + essentials is seed capital. $200–300 into Neo secured card. $7/month KOHO. $8/month rent reporting. That's your credit stack.</div>
+              </div>
+            </div>
+            <div class="stack-step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">Build income parallel to school</div>
+                <div class="step-detail">Every hustle dollar reduces loan dependency. Hustle income on T2125 = proof of income for LOC applications. The circulation loop compounds everything.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer-box">CoreTrust Consulting provides credit education and dispute strategy based on your legal rights as a Canadian consumer. CoreTrust is not a registered credit counselling agency or law firm. No guarantee of any outcome is made or implied. OSAP information reflects Ontario government policy as of May 2026 — verify current terms at ontario.ca/osap.</div>
+      </div>
+
+      <!-- OSAP PANEL -->
+      <div class="panel" id="panel-osap">
+        <div class="section-header">OSAP Strategy — 2026 Reality</div>
+        <div class="grid-3">
+          <div class="metric"><div class="metric-label">Federal Loan Interest (in-school)</div><div class="metric-value green">0%</div><div class="metric-sub">While enrolled full-time</div></div>
+          <div class="metric"><div class="metric-label">Grace Period</div><div class="metric-value green">6 mo</div><div class="metric-sub">Post-graduation before repayment</div></div>
+          <div class="metric"><div class="metric-label">OSAP Default Risk</div><div class="metric-value red">HIGH</div><div class="metric-sub">ECT enforcement now active</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">OSAP Float Deployment Sequence</div>
+          <div class="stack-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">OSAP disbursement arrives</div><div class="step-detail">Cover tuition (if not auto-deducted) + first month essentials. Calculate remaining float.</div></div></div>
+          <div class="stack-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">$200–$300 → Neo Financial secured card deposit</div><div class="step-detail">This is collateral — not spending. Your limit increases by your deposit. You get it back when you convert to unsecured. Starts your credit age clock TODAY.</div><div class="step-meta"><span class="tag tag-cyan">Builds credit age</span><span class="tag tag-neutral">Not spent — returned later</span></div></div></div>
+          <div class="stack-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">$7/month → KOHO Credit Building (autopay)</div><div class="step-detail">Reports to Equifax as a revolving account. Treat as mandatory — like a phone bill. Set on autopay. Never miss.</div><div class="step-meta"><span class="tag tag-green">Reports to Equifax</span><span class="tag tag-neutral">$7/month</span></div></div></div>
+          <div class="stack-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">$8/month → Borrowell Rent Advantage (if living away)</div><div class="step-detail">Reports monthly rent payments to Equifax. No landlord involvement. $900/month rent reporting = your strongest tradeline. 40+ point increases reported within 6 months.</div><div class="step-meta"><span class="tag tag-green">Reports to Equifax</span><span class="tag tag-amber">Away from home only</span></div></div></div>
+          <div class="stack-step"><div class="step-num">5</div><div class="step-body"><div class="step-title">$50–$100 → Emergency savings (untouchable)</div><div class="step-detail">Credit union savings account. Do not touch this. Ever. This is your autopay backstop.</div></div></div>
+          <div class="stack-step"><div class="step-num">6</div><div class="step-body"><div class="step-title">Remaining float → Strict budget for the semester</div><div class="step-detail">Write it down. It must survive until the next disbursement. Hustle revenue supplements it — not OSAP spending.</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">OSAP Calculator — Estimate Your Float</div>
+          <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:160px;"><label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Total OSAP Award ($)</label><input type="number" id="osap-total" value="10000" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcOsap()"></div>
+            <div style="flex:1;min-width:160px;"><label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Tuition per semester ($)</label><input type="number" id="osap-tuition" value="3500" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcOsap()"></div>
+            <div style="flex:1;min-width:160px;"><label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Monthly living cost ($)</label><input type="number" id="osap-living" value="1200" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcOsap()"></div>
+          </div>
+          <div id="osap-results">
+            <div class="calc-row"><div class="calc-label">Grant portion (25%)</div><div class="calc-value green" id="r-grant">$2,500</div></div>
+            <div class="calc-row"><div class="calc-label">Loan portion (75%)</div><div class="calc-value red" id="r-loan">$7,500</div></div>
+            <div class="calc-row"><div class="calc-label">Per semester disbursement (÷2)</div><div class="calc-value" id="r-disbursement">$5,000</div></div>
+            <div class="calc-row"><div class="calc-label">After tuition</div><div class="calc-value" id="r-after-tuition">$1,500</div></div>
+            <div class="calc-row"><div class="calc-label">After 4 months living expenses</div><div class="calc-value" id="r-after-living">-$3,300</div></div>
+            <div class="calc-row"><div class="calc-label" style="font-weight:600;color:var(--text-1);">Available float for deployment</div><div class="calc-value green" id="r-float">$0</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Total Funding Calculator — What You're Actually Working With</div>
+          <p style="font-size:11px;color:var(--text-2);line-height:1.7;margin-bottom:14px;">Enter every source of funding you expect to receive this academic year. This gives you a clearer picture of your total incoming, how much is grant vs. repayable loan, and what you need to cover monthly from other sources. Use the official OSAP Aid Estimator at <a href="https://www.ontario.ca/page/osap-aid-estimator" target="_blank" style="color:var(--cyan-l);">ontario.ca/osap-estimator ↗</a> for your exact OSAP figures before entering below.</p>
+          <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">OSAP Grant Portion ($)</label>
+              <input type="number" id="fc-grant" value="0" placeholder="0" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">OSAP Loan Portion ($)</label>
+              <input type="number" id="fc-loan" value="0" placeholder="0" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Bursaries / Internal Awards ($)</label>
+              <input type="number" id="fc-bursary" value="0" placeholder="0" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Athletic / Academic Scholarship ($)</label>
+              <input type="number" id="fc-scholarship" value="0" placeholder="0" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Work-Study / Part-Time Income ($)</label>
+              <input type="number" id="fc-workstudy" value="0" placeholder="0" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Annual Tuition + Fees ($)</label>
+              <input type="number" id="fc-tuition" value="7000" placeholder="7000" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Monthly Rent ($)</label>
+              <input type="number" id="fc-rent" value="900" placeholder="900" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Monthly Living Expenses ($)</label>
+              <input type="number" id="fc-living" value="600" placeholder="600" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:10px;color:var(--text-3);display:block;margin-bottom:4px;">Books / Supplies ($)</label>
+              <input type="number" id="fc-books" value="400" placeholder="400" style="width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-1);font-size:13px;outline:none;" oninput="calcFunding()">
+            </div>
+          </div>
+          <div id="fc-results" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div style="background:rgba(29,158,117,0.08);border:1px solid rgba(29,158,117,0.2);border-radius:var(--radius-sm);padding:10px 14px;">
+              <div style="font-size:10px;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Money Coming In</div>
+              <div class="calc-row"><div class="calc-label">Total non-repayable funding</div><div class="calc-value green" id="fc-r-free">$0</div></div>
+              <div class="calc-row"><div class="calc-label">Total repayable loan</div><div class="calc-value red" id="fc-r-repay">$0</div></div>
+              <div class="calc-row"><div class="calc-label" style="font-weight:600;">All funding combined</div><div class="calc-value cyan" id="fc-r-total">$0</div></div>
+            </div>
+            <div style="background:rgba(226,75,74,0.06);border:1px solid rgba(226,75,74,0.15);border-radius:var(--radius-sm);padding:10px 14px;">
+              <div style="font-size:10px;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">What It Costs</div>
+              <div class="calc-row"><div class="calc-label">Annual tuition + fees</div><div class="calc-value red" id="fc-r-tuit">$0</div></div>
+              <div class="calc-row"><div class="calc-label">Annual living + rent + books</div><div class="calc-value red" id="fc-r-exp">$0</div></div>
+              <div class="calc-row"><div class="calc-label" style="font-weight:600;">Total annual cost</div><div class="calc-value red" id="fc-r-cost">$0</div></div>
+            </div>
+          </div>
+          <div id="fc-summary" style="background:rgba(62,198,208,0.06);border:1px solid rgba(62,198,208,0.15);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;line-height:1.7;"></div>
+          <div style="margin-top:12px;font-size:10px;color:var(--text-3);border-top:1px solid var(--border);padding-top:10px;">
+            Official calculators:
+            <a href="https://www.ontario.ca/page/osap-aid-estimator" target="_blank" style="color:var(--cyan-l);margin-right:10px;">OSAP Aid Estimator ↗</a>
+            <a href="https://www.canada.ca/en/employment-social-development/services/student-financial-aid/student-loan/grants/canada-student-grant.html" target="_blank" style="color:var(--cyan-l);margin-right:10px;">Canada Student Grant Info ↗</a>
+            <a href="https://www.nslsc.ca/en/home" target="_blank" style="color:var(--cyan-l);">NSLSC Repayment Estimator ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOUNDATION PANEL -->
+      <div class="panel" id="panel-foundation">
+        <div class="section-header">The 18-Year-Old Credit Foundation</div>
+        <div class="grid-4">
+          <div class="metric"><div class="metric-label">Month 6 Target</div><div class="metric-value green">660–700</div><div class="metric-sub">Starting from zero</div></div>
+          <div class="metric"><div class="metric-label">Year 2 Target</div><div class="metric-value green">700–730</div><div class="metric-sub">5+ tradelines</div></div>
+          <div class="metric"><div class="metric-label">Graduation Target</div><div class="metric-value cyan">740–780</div><div class="metric-sub">At 22 years old</div></div>
+          <div class="metric"><div class="metric-label">Ideal Utilization</div><div class="metric-value green">&lt;10%</div><div class="metric-sub">Every account, always</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Opening Stack — Options to Know About</div>
+          <p style="font-size:11px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">These are financial products that exist and are available to you. This isn't a list of things you need to do — it's information about what's out there and how each one works so you can decide what makes sense for your situation. Do your own research before signing up for anything.</p>
+          <div class="stack-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Neo Financial Secured Card</div><div class="step-detail">No annual fee. Minimum $50 deposit. Reports to both Equifax and TransUnion. Your deposit becomes your credit limit — so a $300 deposit gives you a $300 limit. Neo also offers a rent reporting feature that can report your monthly rent payments to the bureaus, similar to Borrowell. Worth looking into if you're paying rent and want to consolidate into one product. Starting your credit history early has a real impact on your score over time because account age is a scoring factor.</div><div class="step-meta"><span class="tag tag-cyan">Equifax + TransUnion</span><span class="tag tag-neutral">$0 annual fee</span><span class="tag tag-amber">Deposit required</span></div></div></div>
+          <div class="stack-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">KOHO Credit Building — Relevant if You're Rebuilding</div><div class="step-detail">$7/month subscription that reports to Equifax as a revolving account. This product is primarily useful if you already have negative marks on your credit file and need to add positive reporting history. If you're starting fresh with no credit history at all, your money and energy is better directed toward a secured card. That said, some people use both — your call based on your situation.</div><div class="step-meta"><span class="tag tag-amber">Best for rebuilding</span><span class="tag tag-neutral">$7/month</span></div></div></div>
+          <div class="stack-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Borrowell Rent Advantage — If You're Paying Rent</div><div class="step-detail">$8/month. Reports your rent payments to Equifax as a tradeline. No landlord involvement needed. If you're already paying rent — say $900/month — this turns a payment you're already making into credit-building activity. Note: Neo Financial also offers rent reporting, so if you already have a Neo card, check whether their rent feature covers what you need before paying separately for Borrowell. Compare and pick one.</div><div class="step-meta"><span class="tag tag-green">Reports to Equifax</span><span class="tag tag-amber">Only relevant if you pay rent</span></div></div></div>
+          <div class="stack-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">FrontLobby — If Your Landlord Is on the Platform</div><div class="step-detail">Reports rent payments to both Equifax and TransUnion. The catch is your landlord needs to be registered on the FrontLobby platform. When you move in, it's worth asking your landlord if they use it or would consider joining. If they do, dual-bureau rent reporting costs you nothing extra.</div><div class="step-meta"><span class="tag tag-cyan">Equifax + TransUnion</span><span class="tag tag-neutral">Landlord must participate</span></div></div></div>
+          <div class="stack-step"><div class="step-num">5</div><div class="step-body"><div class="step-title">Authorized User — If a Parent Has Good Credit</div><div class="step-detail">If a parent or guardian adds you as an authorized user on their credit card account, their entire account history — age, limit, payment record — can appear on your credit file. You don't need to use the card or even have it in your possession. The impact depends on the age and quality of the account. This is one of the faster ways to add account history to a new credit file if the option is available to you.</div><div class="step-meta"><span class="tag tag-green">No card use required</span><span class="tag tag-neutral">Depends on parent's profile</span></div></div></div>
+          <div class="stack-step"><div class="step-num">6</div><div class="step-body"><div class="step-title">Credit Union Share-Secured Loan — Installment Tradeline Option</div><div class="step-detail">Some credit unions offer a product where you deposit money into a savings account and the CU lends you the equivalent back. You repay it over 12 months while your savings stay locked. Each payment reports to the bureaus as an installment loan. This adds a different type of credit account (installment vs revolving), which affects your credit mix score factor. Net cost is roughly $15–20 in interest depending on rate. It's not for everyone — research whether your CU offers this and whether it makes sense for your situation.</div><div class="step-meta"><span class="tag tag-cyan">Installment tradeline</span><span class="tag tag-amber">CU-specific — check availability</span></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">The Statement Date Trick — Worth 20–30 Points</div>
+          <p style="font-size:11px;color:var(--text-2);line-height:1.7;margin-bottom:10px;">The statement balance is what gets reported to the bureaus — not your activity or your limit. The balance on the day your statement generates.</p>
+          <div class="stack-step"><div class="step-num">→</div><div class="step-body"><div class="step-detail">Use your Neo secured card for small purchases ($20–$50/month). 2–3 days BEFORE statement closes: pay balance to ZERO. Statement generates showing near-zero balance = near-zero utilization = maximum score impact. After statement generates: use the card again for next month.</div></div></div>
+          <div style="background:rgba(62,198,208,0.06);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px;font-size:11px;color:var(--cyan-l);border:1px solid rgba(62,198,208,0.12);">Know your statement date. Log into Neo app and find it. Set a phone reminder 3 days before it every month.</div>
+        </div>
+      </div>
+
+      <!-- ROADMAP PANEL -->
+      <div class="panel" id="panel-roadmap">
+        <div class="section-header">Year-by-Year Blueprint — 18 to Graduation</div>
+        <div class="grid-4" style="margin-bottom:16px;">
+          <div class="metric"><div class="metric-label">Pre-Start (17–18)</div><div class="metric-value amber">PREP</div><div class="metric-sub">Summer before school</div></div>
+          <div class="metric"><div class="metric-label">Year 1–2</div><div class="metric-value green">BUILD</div><div class="metric-sub">Foundation + first leverage</div></div>
+          <div class="metric"><div class="metric-label">Year 3</div><div class="metric-value cyan">DEPLOY</div><div class="metric-sub">LOC + business credit</div></div>
+          <div class="metric"><div class="metric-label">Graduation</div><div class="metric-value purple">LAUNCH</div><div class="metric-sub">740–780 score. Ready.</div></div>
+        </div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Pre-Start — Last Summer (Age 17–18)</div><div class="tl-title">Prep before orientation week</div><ul class="tl-items"><li>Open Neo Financial secured card — deposit $200</li><li>Add yourself as authorized user on parent's best card</li><li>Open a credit union account — deposit $50 minimum</li><li>Set up KOHO credit building ($7/month autopay)</li><li>Start first hustle — car detailing or lawn care</li><li>By September: 2–3 months of credit history already started</li></ul></div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Year 1 — Building the Foundation (Age 18–19)</div><div class="tl-score">Target: 680–720 · 4–6 tradelines</div><ul class="tl-items"><li>Month 1: OSAP audit → float deployment → Borrowell Rent Advantage</li><li>Month 2: Launch first campus hustle. First revenue → CU account</li><li>Month 3: Walk into CU → apply for student card or share-secured loan</li><li>Months 4–12: Pay everything before statement date. Never miss autopay.</li><li>Tax time: File T1 with T2125 for hustle income. Claim all eligible expenses.</li></ul></div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Year 2 — Building the Leverage (Age 19–20)</div><div class="tl-score">Target: 700–730 · 5+ tradelines</div><ul class="tl-items"><li>Request CLI on Neo card (12 months clean → apply for limit increase)</li><li>Apply for first real unsecured card at 700+: PC Financial, Tangerine, or CU card</li><li>Keep Neo card open FOREVER — its age is valuable</li><li>Register sole proprietorship if hustle income hit $10K+ in Year 1</li><li>Open dedicated business chequing at CU. Get D-U-N-S number (free)</li></ul></div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Year 3 — Leverage Activation (Age 20–21)</div><div class="tl-score">Target: 720–750 · LOC open · Business profile starting</div><ul class="tl-items"><li>Unsecured LOC application at CU (710+ score + 2 years T2125 income proof)</li><li>Target: $2,000–$5,000 LOC — use only for hustle expenses, repay within 60 days</li><li>Net-30 vendor accounts: Uline Canada, Staples Business Advantage</li><li>Building PAYDEX score on business side simultaneously</li></ul></div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot locked"></div></div><div class="tl-body"><div class="tl-age">Year 4 / Graduation (Age 21–22)</div><div class="tl-score">Target: 740–780 · Mortgage-ready · Business LOC</div><ul class="tl-items"><li>Log into NSLSC — get exact OSAP loan balance. Know your number.</li><li>Grace period plan: Month 3–4 → first premium bank card (score 740+)</li><li>Month 5 → apply for first major bank LOC (RBC, TD, BMO, CIBC, Scotia)</li><li>OSAP repayment begins Month 6 — already on autopay. You are ready.</li></ul></div></div>
+        </div>
+      </div>
+
+      <!-- HUSTLE PANEL -->
+      <div class="panel" id="panel-hustle">
+        <div class="section-header">Side Hustle — Examples & Income Ranges</div>
+        <div style="background:rgba(62,198,208,0.06);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:10px 14px;font-size:11px;color:var(--text-2);margin-bottom:12px;line-height:1.7;">The following are <strong style="color:var(--text-1);">examples of income-generating activities</strong> that students commonly pursue. This is not a recommendation or instruction to do any of them. Some require licenses, skills, or equipment — do your own research. Income ranges listed are general estimates that vary significantly by location, effort, market, and individual skill. This is information, not a plan.</div>
+        <div class="grid-3">
+          <div class="metric"><div class="metric-label">Car Detailing (example)</div><div class="metric-value green">$150–600</div><div class="metric-sub">Per weekend, varies by area</div></div>
+          <div class="metric"><div class="metric-label">Snow Removal (example)</div><div class="metric-value green">$1,000–2,000</div><div class="metric-sub">Seasonal — varies by contracts</div></div>
+          <div class="metric"><div class="metric-label">Tutoring (example)</div><div class="metric-value green">$25–80/hr</div><div class="metric-sub">Varies by subject + experience</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Income Activity Examples — For Reference Only</div>
+            <table class="tbl">
+              <thead><tr><th>Hustle</th><th>Startup</th><th>Revenue</th><th>Season</th></tr></thead>
+              <tbody>
+                <tr><td class="bold">Car Detailing</td><td>$50–150</td><td>$75–200/car</td><td><span class="tag tag-green">Spring/Summer</span></td></tr>
+                <tr><td class="bold">Snow Removal</td><td>$0–50</td><td>$200/mo/client</td><td><span class="tag tag-purple">Winter</span></td></tr>
+                <tr><td class="bold">Lawn Care</td><td>$0</td><td>$30–80/visit</td><td><span class="tag tag-green">Spring/Fall</span></td></tr>
+                <tr><td class="bold">Tutoring</td><td>$0</td><td>$25–80/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Video Editing</td><td>$0 (CapCut)</td><td>$50–300/video</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Canva Templates</td><td>$0</td><td>$5–20/sale (passive)</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Product Flipping</td><td>$50–200</td><td>30–300% margin</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Moving Help</td><td>$0</td><td>$150–300/move</td><td><span class="tag tag-amber">Sept + April</span></td></tr>
+                <tr><td class="bold">Food Delivery</td><td>$0 (bike/car)</td><td>$15–25/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Dog Walking / Pet Sitting</td><td>$0 (Rover/Wag)</td><td>$20–50/walk, $50–90/night</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Pressure Washing</td><td>$0–50 (rent equip)</td><td>$100–400/job</td><td><span class="tag tag-green">Spring/Summer</span></td></tr>
+                <tr><td class="bold">Furniture Assembly</td><td>$0 (TaskRabbit)</td><td>$50–150/job</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Babysitting / Childcare</td><td>$0</td><td>$15–25/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Errand Running</td><td>$0 (TaskRabbit)</td><td>$20–40/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Grocery Shopping (Instacart)</td><td>$0</td><td>$15–22/hr + tips</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Resume Writing</td><td>$0</td><td>$50–150/resume</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Social Media Management</td><td>$0</td><td>$200–600/mo per client</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Freelance Writing / Blogging</td><td>$0</td><td>$25–150/article</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Proofreading / Editing</td><td>$0</td><td>$20–50/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Data Entry (Remote)</td><td>$0</td><td>$12–20/hr</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Print-on-Demand (Printify)</td><td>$0</td><td>$5–25/sale (passive)</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Selling Used Items (FB Marketplace)</td><td>$0</td><td>$20–500/item</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Selling Study Notes / Guides</td><td>$0</td><td>$5–20/sale (passive)</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Campus Ambassador Programs</td><td>$0</td><td>$200–500/mo + perks</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">KOHO / Neo / EQ Bank Referrals</td><td>$0</td><td>$20–25/referral</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Christmas Light Installation</td><td>$50–100</td><td>$200–800/house</td><td><span class="tag tag-purple">Nov–Dec</span></td></tr>
+                <tr><td class="bold">Junk Removal</td><td>$0 (borrow truck)</td><td>$100–300/job</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Photography (Phone Camera)</td><td>$0</td><td>$50–200/session</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+                <tr><td class="bold">Handmade / Craft Goods (Etsy)</td><td>$20–50 supplies</td><td>$15–100/item</td><td><span class="tag tag-neutral">Year-round</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">The Hustle Rotation System</div>
+            <div class="stack-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Earn (cash or e-transfer)</div><div class="step-detail">Deposit immediately into business chequing account (CU account works to start)</div></div></div>
+            <div class="stack-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Weekly: rotate through secured card</div><div class="step-detail">Make a purchase on the card. Pay off before statement date. Bureau sees consistent activity + consistent payoff = ideal credit behaviour.</div></div></div>
+            <div class="stack-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Keep $50–$100 operating float</div><div class="step-detail">In business account. For supplies and next job expenses.</div></div></div>
+            <div class="stack-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">$15K+ in a year → formalize</div><div class="step-detail">Register sole proprietorship. Open dedicated business account. File T2125. Get D-U-N-S number.</div></div></div>
+            <div class="stack-step"><div class="step-num">5</div><div class="step-body"><div class="step-title">T2125 = proof of income</div><div class="step-detail">2 years of hustle income on tax returns → LOC application at CU. This is how you get leverage at 20–21.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE MONEY PANEL -->
+      <div class="panel" id="panel-funding">
+        <div class="section-header">Free Money Stack — Scholarships, Bursaries & Work-Study</div>
+        <div class="grid-3">
+          <div class="metric"><div class="metric-label">AFA (Athletic Award)</div><div class="metric-value green">$6–12K/yr</div><div class="metric-sub">Tuition + compulsory fees</div></div>
+          <div class="metric"><div class="metric-label">OSOG (Ontario)</div><div class="metric-value green">Auto</div><div class="metric-sub">Reduces repayable OSAP</div></div>
+          <div class="metric"><div class="metric-label">Loran Award</div><div class="metric-value purple">$100K</div><div class="metric-sub">4-year value. Apply early.</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Athletic Financial Awards (AFA) — U Sports</div>
+            <div class="info-row"><div class="info-key">Governing body</div><div class="info-val">U Sports (Canadian Interuniversity Sport)</div></div>
+            <div class="info-row"><div class="info-key">Maximum amount</div><div class="info-val">Tuition + compulsory fees/year (~$6–12K at Ontario schools)</div></div>
+            <div class="info-row"><div class="info-key">What it covers</div><div class="info-val red">NOT room, board, or personal expenses (unlike US NCAA D1)</div></div>
+            <div class="info-row"><div class="info-key">Renewal</div><div class="info-val">Annual — coach's discretion + min. academic standing (60–70% GPA)</div></div>
+            <div class="info-row"><div class="info-key">OSAP interaction</div><div class="info-val">AFA reduces tuition → reduces OSAP need → better grant/loan ratio</div></div>
+            <div class="info-row"><div class="info-key">Stack with</div><div class="info-val green">OSAP + internal school bursary + external bursaries simultaneously</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Bursary Sources — Stack All of These</div>
+            <table class="tbl">
+              <thead><tr><th>Source</th><th>Type</th><th>How to Apply</th></tr></thead>
+              <tbody>
+                <tr><td class="bold">Canada Student Grant</td><td>Federal</td><td><span class="tag tag-cyan">Auto via OSAP</span></td></tr>
+                <tr><td class="bold">OSOG (Ontario)</td><td>Provincial</td><td><span class="tag tag-cyan">Auto via OSAP</span></td></tr>
+                <tr><td class="bold">BSWD</td><td>Disability</td><td>Financial aid office</td></tr>
+                <tr><td class="bold">School internal bursaries</td><td>Institution</td><td>Financial aid office — Oct/Nov deadline</td></tr>
+                <tr><td class="bold">TD Scholarships</td><td>Private</td><td>TD.com — community leadership</td></tr>
+                <tr><td class="bold">RBC Future Launch</td><td>Private</td><td>RBC.com — youth-focused</td></tr>
+                <tr><td class="bold">Indspire</td><td>Indigenous</td><td>Indspire.ca — substantial funding</td></tr>
+                <tr><td class="bold">Yconic / ScholarTree</td><td>Database</td><td>Search + apply to 10+ minimum</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Academic Scholarships — Automatic + Applied</div>
+          <table class="tbl">
+            <thead><tr><th>Scholarship</th><th>Amount</th><th>How</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">President's Entrance (most schools)</td><td>$1,000–$15,000</td><td><span class="tag tag-cyan">Auto on admission at 90–95%+ avg</span></td></tr>
+              <tr><td class="bold">Loran Award</td><td>$100,000 (4yr)</td><td>Apply — character + leadership + academics</td></tr>
+              <tr><td class="bold">Schulich Leaders (STEM)</td><td>$100,000</td><td>Apply — top academics + community</td></tr>
+              <tr><td class="bold">TD Community Leadership</td><td>$70,000</td><td>Apply — leadership + academics</td></tr>
+              <tr><td class="bold">Vanier CGS (graduate)</td><td>$50,000/yr</td><td>Graduate students — 3 years</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">Work-Study Programs</div>
+          <div class="info-row"><div class="info-key">University work-study</div><div class="info-val">Available to OSAP recipients. On-campus employment. $15–20/hr, 10–15 hrs/week during school year.</div></div>
+          <div class="info-row"><div class="info-key">Federal equivalent</div><div class="info-val red">No formal federal work-study program in Canada (unlike US Federal Work-Study)</div></div>
+          <div class="info-row"><div class="info-key">College co-op</div><div class="info-val green">Curriculum-integrated, paid work terms — apply through program directly</div></div>
+          <div class="info-row"><div class="info-key">Canada Summer Jobs</div><div class="info-val">Federal funding for youth employment at non-profits and small businesses</div></div>
+          <div class="info-row"><div class="info-key">Apply through</div><div class="info-val">University financial aid office or student employment portal — Oct/Nov each year</div></div>
+        </div>
+      </div>
+
+      <!-- TRADES PANEL -->
+      <div class="panel" id="panel-trades">
+        <div class="section-header">Trades / Apprenticeship Path</div>
+        <div class="grid-3">
+          <div class="metric"><div class="metric-label">Journeyperson Income</div><div class="metric-value green">$70–130K+</div><div class="metric-sub">Most Ontario trades</div></div>
+          <div class="metric"><div class="metric-label">Canada Apprentice Loan</div><div class="metric-value green">$4,000</div><div class="metric-sub">Per training period. Interest-free.</div></div>
+          <div class="metric"><div class="metric-label">Mortgage Timeline</div><div class="metric-value cyan">2 yrs</div><div class="metric-sub">Post Red Seal with 720+ score</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Funding Sources</div>
+          <table class="tbl">
+            <thead><tr><th>Program</th><th>Amount</th><th>Details</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">OSAP (in-school component)</td><td>Varies</td><td>Applies to Ontario College of Trades approved programs</td></tr>
+              <tr><td class="bold">Canada Apprentice Loan</td><td>Up to $4,000/period</td><td>Federal, interest-free, Red Seal trades. Apply via CSFA.</td></tr>
+              <tr><td class="bold">ACIG (Completion Grant)</td><td>$2,000</td><td>Upon journeyperson certification. Verify at canada.ca — federal grants change.</td></tr>
+              <tr><td class="bold">OYAP (High School)</td><td>No tuition cost</td><td>Start apprenticeship hours in Grades 11/12. Earn co-op credits.</td></tr>
+              <tr><td class="bold">Employer-sponsored</td><td>Wages + subsidies</td><td>Large employers pay wages + government pays training subsidies to employer</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Credit Building — Year by Year</div>
+            <div class="timeline" style="margin-top:4px;">
+              <div class="tl-item"><div class="tl-left"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Year 1 Trade School</div><ul class="tl-items"><li>Same opening stack as university: Neo + KOHO + CU</li><li>Offer basic services in your trade niche (legally permitted scope)</li><li>NOT permitted work requiring journeyperson sign-off</li></ul></div></div>
+              <div class="tl-item"><div class="tl-left"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-age">Year 2 — Apprenticeship Active</div><ul class="tl-items"><li>Registered apprenticeship = T4 employment income</li><li>T4 unlocks first unsecured card at a major bank</li><li>Wages: $20–$40/hour depending on trade + year level</li><li>Apply for unsecured card + personal LOC at CU</li></ul></div></div>
+              <div class="tl-item"><div class="tl-left"><div class="tl-dot locked"></div></div><div class="tl-body"><div class="tl-age">Red Seal → Journeyperson</div><ul class="tl-items"><li>Income jumps: $70K–$130K+/year immediately</li><li>2–3 years of clean credit history</li><li>720+ score + $70K income = mortgage pre-approval realistic</li><li>Register as contractor → build business credit simultaneously</li></ul></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Why Trades = Fastest Path to Homeownership</div>
+            <p style="font-size:11px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Trade school students complete in 1–3 years vs. 4 years. They enter high-income fields faster, carry less debt, and a Red Seal at 22–24 with clean credit and $80K income is a mortgage-ready profile most university grads won't hit until 28–30.</p>
+            <div style="background:rgba(62,198,208,0.06);border-radius:var(--radius-sm);padding:10px 12px;font-size:11px;color:var(--cyan-l);line-height:1.6;border:1px solid rgba(62,198,208,0.12);">Register a sole proprietorship in Year 2 of apprenticeship. By Red Seal certification you have: 2–3 years business banking + 2–3 years personal credit history + T2125 income + T4 employment income. That combination gets you business credit access most 25-year-olds have never seen.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISPUTE LETTERS PANEL -->
+      <div class="panel" id="panel-dispute">
+        <div class="section-header">Canadian Dispute Letter Generator</div>
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="metric"><div class="metric-label">Bureau Investigation Window</div><div class="metric-value cyan">30 business days</div><div class="metric-sub">From receipt of dispute</div></div>
+          <div class="metric"><div class="metric-label">Reporting Limit</div><div class="metric-value amber">6 years</div><div class="metric-sub">From date of last activity</div></div>
+          <div class="metric"><div class="metric-label">Bureau Addresses</div><div class="metric-value green">2</div><div class="metric-sub">Equifax CA + TransUnion CA</div></div>
+        </div>
+
+        <div class="letter-card">
+          <div class="letter-header" onclick="toggleLetter('l1')"><div class="letter-title">Letter Type 1 — Initial Bureau Dispute (Inaccurate Information)</div><span class="tag tag-cyan">Most Common</span></div>
+          <div class="letter-body" id="l1">
+            <pre class="letter-text">[Your Name]
+[Your Address]
+[City, Province, Postal Code]
+[Date]
+
+Equifax Canada Consumer Relations
+P.O. Box 190 Station Jean-Talon, Montreal, QC H1S 2Z2
+[OR TransUnion Canada, P.O. Box 338 LCD1, Hamilton, ON L8L 7W2]
+
+RE: Formal Dispute of Inaccurate Information — [Your Full Legal Name]
+
+To Whom It May Concern,
+
+I am writing pursuant to my rights under the Consumer Reporting Act (Ontario)
+and PIPEDA to formally dispute the following inaccurate information appearing
+on my credit file.
+
+DISPUTED ITEM(S):
+Account Name: [Creditor/Collector Name]
+Account Number: [Last 4 digits: XXXX]
+Reported Status: [e.g., "Collection — $2,341 outstanding"]
+Grounds for Dispute: [e.g., "This account was paid in full on [Date].
+The balance shown is inaccurate. See enclosed payment confirmation."]
+
+REQUIRED CORRECTION:
+[e.g., "Update account status to 'Paid' with $0 balance" OR
+"Delete this tradeline as it exceeds the 6-year reporting limit."]
+
+SUPPORTING DOCUMENTATION ENCLOSED:
+- [Payment confirmation letter dated [Date]]
+- [Bank statement showing payment cleared on [Date]]
+
+Pursuant to the Consumer Reporting Act and your investigation obligations,
+I request this dispute be investigated within 30 business days of receipt.
+
+If the furnisher cannot verify accuracy, I request immediate deletion.
+
+Please confirm receipt of this dispute in writing.
+
+Sincerely,
+
+[Your Signature]
+[Your Printed Name]
+[Date] | [Phone] | [Email]</pre>
+            <button class="copy-btn" onclick="copyText('l1')">Copy Letter</button>
+          </div>
+        </div>
+
+        <div class="letter-card">
+          <div class="letter-header" onclick="toggleLetter('l2')"><div class="letter-title">Letter Type 2 — Obsolete Debt Removal (Past 6-Year Reporting Limit)</div><span class="tag tag-amber">High Impact</span></div>
+          <div class="letter-body" id="l2">
+            <pre class="letter-text">[Your Name / Address / Date]
+
+RE: Request for Removal of Obsolete Account — Consumer Reporting Act (Ontario)
+
+To Whom It May Concern,
+
+I am formally requesting the removal of the following account from my credit
+file on the grounds that it has exceeded the maximum reporting period under
+the Consumer Reporting Act (Ontario).
+
+ACCOUNT DETAILS:
+Account Name: [Creditor Name]
+Account Number: [XXXX]
+Date of Last Activity: [Date]
+Current Date: [Today's Date]
+
+Under the Consumer Reporting Act (Ontario), negative credit information may
+not be reported beyond 6 years from the date of last activity. The date of
+last activity on this account was [Date], which means this account should
+have been removed no later than [Removal Date].
+
+This item continues to appear on my [Equifax/TransUnion] report as of
+[Date of Report], in violation of my consumer rights.
+
+I request immediate deletion and written confirmation within 30 business days.
+
+Sincerely,
+[Signature / Name / Date]</pre>
+            <button class="copy-btn" onclick="copyText('l2')">Copy Letter</button>
+          </div>
+        </div>
+
+        <div class="letter-card">
+          <div class="letter-header" onclick="toggleLetter('l3')"><div class="letter-title">Letter Type 3 — Unauthorized Hard Inquiry Removal</div><span class="tag tag-neutral">Score Recovery</span></div>
+          <div class="letter-body" id="l3">
+            <pre class="letter-text">[Your Name / Address / Date]
+
+RE: Removal of Unauthorized Credit Inquiry
+
+To Whom It May Concern,
+
+I am requesting removal of a hard inquiry appearing on my [Equifax/TransUnion]
+credit report that I did not authorize.
+
+INQUIRY DETAILS:
+Inquiring Company: [Company Name]
+Date of Inquiry: [Date]
+
+I did not apply for credit, enter into any agreement, or grant permissible
+purpose to [Company Name] to access my credit file on or around [Date].
+This inquiry was made without my authorization and constitutes a violation
+of PIPEDA and the Consumer Reporting Act (Ontario).
+
+I request immediate removal of this inquiry and an investigation into how
+this access was obtained.
+
+Sincerely,
+[Signature / Name / Date]</pre>
+            <button class="copy-btn" onclick="copyText('l3')">Copy Letter</button>
+          </div>
+        </div>
+
+        <div class="letter-card">
+          <div class="letter-header" onclick="toggleLetter('l4')"><div class="letter-title">Letter Type 4 — Goodwill Deletion Request (Direct to Creditor)</div><span class="tag tag-purple">Relationship Play</span></div>
+          <div class="letter-body" id="l4">
+            <pre class="letter-text">[Your Name / Address / Date]
+
+[Creditor Name / Address]
+
+RE: Goodwill Deletion Request — Account [XXXX]
+
+Dear [Creditor Name] Customer Relations,
+
+I am writing to respectfully request a goodwill removal of a negative item
+on my credit file associated with the above-referenced account.
+
+I acknowledge that [the late payment / collection balance] was accurate at
+the time. However, [brief context: e.g., "this occurred during a period of
+financial hardship, and I have since maintained a consistent payment record."]
+
+I am now working toward [mortgage / business financing] and this single item
+is a significant barrier to that goal.
+
+I understand a goodwill deletion is entirely at your discretion and you are
+under no obligation to remove accurate information. I am asking as someone
+who has demonstrated financial recovery.
+
+Thank you for your consideration.
+
+Sincerely,
+[Signature / Name / Date / Contact Information]</pre>
+            <button class="copy-btn" onclick="copyText('l4')">Copy Letter</button>
+          </div>
+        </div>
+
+        <div class="letter-card">
+          <div class="letter-header" onclick="toggleLetter('l5')"><div class="letter-title">Letter Type 5 — Pay-for-Delete Request (Collections)</div><span class="tag tag-amber">Negotiation Tool</span></div>
+          <div class="letter-body" id="l5">
+            <pre class="letter-text">[Your Name / Address / Date]
+
+[Collection Agency Name / Address]
+
+RE: Settlement and Deletion Proposal — File Number [XXXX]
+
+To Whom It May Concern,
+
+I am prepared to resolve this account under the following condition: upon
+receipt of payment, your agency agrees to request deletion of this tradeline
+from both Equifax Canada and TransUnion Canada within 30 days of payment clearing.
+
+I make this offer without any admission of liability.
+
+PROPOSED TERMS:
+- Settlement amount: $[Amount]
+- Form of payment: [Certified cheque / Bank transfer]
+- Condition: Written confirmation of deletion request to both bureaus
+  within 30 days of payment
+
+Please provide written confirmation on your company letterhead before I
+issue payment. I will NOT issue payment without written confirmation of deletion.
+
+This offer is valid for 30 days from the date of this letter.
+
+Sincerely,
+[Signature / Name / Date]</pre>
+            <button class="copy-btn" onclick="copyText('l5')">Copy Letter</button>
+          </div>
+        </div>
+
+        <div class="disclaimer-box">CoreTrust Consulting provides dispute strategy based on your legal rights as a Canadian consumer. Not a law firm. No guarantee of deletion. Results depend on bureau investigation and furnisher response. Dispute grounds must be evidence-based — do not dispute accurate information.</div>
+      </div>
+
+      <!-- CARDS PANEL -->
+      <div class="panel" id="panel-cards">
+        <div class="section-header">Canadian Bank & Card Matrix</div>
+        <div class="card">
+          <div class="card-title">Secured Cards — Credit Builders <span class="tag tag-cyan ct-pill">Reports to bureaus</span></div>
+          <table class="tbl">
+            <thead><tr><th>Card</th><th>Annual Fee</th><th>Min Deposit</th><th>Reports To</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td class="bold"><a href="https://www.neofinancial.com/products/credit-card" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Neo Financial Secured ↗</a></td><td>$0</td><td>$50</td><td><span class="tag tag-cyan">Both</span></td><td>Students — lowest min deposit. Also offers rent reporting.</td></tr>
+              <tr><td class="bold"><a href="https://www.hometrust.ca/credit-cards/secured-visa/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Home Trust Secured Visa ↗</a></td><td>$0</td><td>$500</td><td><span class="tag tag-cyan">Both</span></td><td>No-fee starter</td></tr>
+              <tr><td class="bold"><a href="https://www.koho.ca/credit-building/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">KOHO Credit Building ↗</a></td><td>$7/mo</td><td>$0</td><td><span class="tag tag-amber">Equifax</span></td><td>Better suited for rebuilding — not required if starting fresh</td></tr>
+              <tr><td class="bold"><a href="https://www.plastk.ca" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Plastk Secured Visa ↗</a></td><td>$48/yr</td><td>$300</td><td><span class="tag tag-cyan">Both</span></td><td>Rewards while rebuilding</td></tr>
+              <tr><td class="bold"><a href="https://www.capitalone.ca/credit-cards/guaranteed-mastercard/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Capital One Guaranteed MC ↗</a></td><td>$59/yr</td><td>$75</td><td><span class="tag tag-cyan">Both</span></td><td>Lowest initial deposit option</td></tr>
+              <tr><td class="bold">RBC / TD / Scotia Secured</td><td>Varies</td><td>$500</td><td><span class="tag tag-cyan">Both</span></td><td>Bank relationship building — check each bank's website directly</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">No-Fee Cards — Best for Students <span class="tag tag-green ct-pill">$0/year · start here</span></div>
+          <table class="tbl">
+            <thead><tr><th>Card</th><th>Rewards</th><th>Annual Fee</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td class="bold"><a href="https://www.tangerine.ca/en/products/spending/creditcard/money-back-credit-card" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Tangerine Money-Back MC ↗</a></td><td>2% in 2–3 categories you pick (rest 0.5%)</td><td class="green">$0</td><td>Everyday cashback — choose groceries/dining/etc.</td></tr>
+              <tr><td class="bold"><a href="https://www.scotiabank.com/ca/en/personal/credit-cards/all-credit-cards/scene-visa-card.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Scotiabank Scene+ Visa ↗</a></td><td>2x Scene+ on groceries (Sobeys/FreshCo) + dining + Cineplex</td><td class="green">$0</td><td>Students — food + movies. Easy approval.</td></tr>
+              <tr><td class="bold"><a href="https://www.rogersbank.com/en/our_credit_cards" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Rogers Mastercard ↗</a></td><td>1.5% cash (3% on USD purchases — offsets FX); more for Rogers/Fido clients</td><td class="green">$0</td><td>US/online shopping + phone bill. No-FX hack.</td></tr>
+              <tr><td class="bold"><a href="https://www.pcfinancial.ca/en/credit-cards/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">PC Financial World Elite MC ↗</a></td><td>30 PC Optimum pts/$ at Loblaws banners + Shoppers</td><td class="green">$0</td><td>Groceries + pharmacy (No Frills, Shoppers, Loblaws)</td></tr>
+              <tr><td class="bold"><a href="https://www.amex.ca/en-ca/credit-cards/simplycash-card/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Amex SimplyCash ↗</a></td><td>2% on gas + groceries, 1.25% everything else</td><td class="green">$0</td><td>First Amex, simple flat cashback</td></tr>
+              <tr><td class="bold"><a href="https://www.bmo.com/en-ca/main/personal/credit-cards/bmo-cashback-mastercard/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">BMO CashBack MC ↗</a></td><td>3% groceries, 1% recurring bills</td><td class="green">$0</td><td>Grocery cashback; student version available</td></tr>
+              <tr><td class="bold"><a href="https://www.wealthsimple.com/en-ca/product/credit-card" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Wealthsimple Card ↗</a></td><td>1% cashback, NO foreign-transaction fee</td><td class="green">$0</td><td>Travel/US spend; pairs with Wealthsimple Cash HISA</td></tr>
+              <tr><td class="bold"><a href="https://www.neofinancial.com" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Neo Mastercard ↗</a></td><td>Avg ~1%+ cashback at partners</td><td class="green">$0</td><td>Pairs with Neo secured card + savings</td></tr>
+              <tr><td class="bold"><a href="https://triangle.canadiantire.ca/en/credit-cards.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Canadian Tire Triangle MC ↗</a></td><td>Up to 3% CT Money on gas + grocery</td><td class="green">$0</td><td>Gas + everyday; no-fee category card</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;padding:8px 12px;background:rgba(62,198,208,0.06);border-radius:var(--radius-sm);border:1px solid var(--border-2);font-size:10px;color:var(--cyan-l);">Welcome offers change monthly — confirm the current bonus on each card's page before applying. <strong>Apple Card is US-only (not available in Canada)</strong> — but Apple Pay works with every card here; for that tap-to-pay + no-FX combo, the Wealthsimple or Rogers card pairs best.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Premium Rewards — When Your Spending Earns the Fee Back (680+)</div>
+          <table class="tbl">
+            <thead><tr><th>Card</th><th>Rewards</th><th>Annual Fee</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td class="bold"><a href="https://www.amex.ca/en-ca/credit-cards/cobalt-card/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Amex Cobalt ↗</a></td><td>5x dining + groceries, 3x streaming, 2x transit + gas</td><td class="amber">$155.88 ($12.99/mo)</td><td><strong>Top points card for young adults</strong> — if you eat out / buy groceries, this wins</td></tr>
+              <tr><td class="bold"><a href="https://www.scotiabank.com/ca/en/personal/credit-cards/american-express/gold-card.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Scotiabank Gold Amex ↗</a></td><td>6x Scene+ groceries, 5x dining, 3x gas/transit — NO foreign-tx fee</td><td class="amber">$120</td><td>Grocery/dining points + travels with no FX fee</td></tr>
+              <tr><td class="bold"><a href="https://www.scotiabank.com/ca/en/personal/credit-cards/visa/momentum-visa-infinite-card.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Scotia Momentum Visa Infinite ↗</a></td><td>4% groceries + recurring bills, 2% gas/transit (cashback)</td><td class="amber">$120 ($0 yr 1 often)</td><td>Pure cashback on essentials</td></tr>
+              <tr><td class="bold"><a href="https://www.cibc.com/en/personal-banking/credit-cards/all-cards/cibc-dividend-visa-infinite-card.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">CIBC Dividend Visa Infinite ↗</a></td><td>4% groceries + gas, 2% transit/dining/recurring (cashback)</td><td class="amber">$120 ($0 yr 1 often)</td><td>Cashback for drivers + grocery</td></tr>
+              <tr><td class="bold"><a href="https://www.scotiabank.com/ca/en/personal/credit-cards/visa/passport-visa-infinite-card.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Scotiabank Passport Visa Infinite ↗</a></td><td>Scene+ points + airport lounge passes — NO foreign-tx fee</td><td class="amber">$150</td><td>Travel + no-FX for study-abroad / US trips</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;padding:8px 12px;background:rgba(239,159,39,0.06);border-radius:var(--radius-sm);border:1px solid rgba(239,159,39,0.15);font-size:10px;color:var(--amber);">Only worth it if your category spend earns more than the fee. Rule of thumb: heavy food/grocery spend → Cobalt or Scotia Gold; want simple cashback → no-fee cards above. Always pay in full — rewards mean nothing if you carry ~20% interest.</div>
+        </div>
+        <div class="card" style="border:1px solid rgba(62,198,208,0.3);background:rgba(62,198,208,0.05);">
+          <div class="card-title">✈️ Studying / Travelling Abroad? Use a NO-FX Card</div>
+          <p style="font-size:11px;color:var(--text-2);line-height:1.7;margin:4px 0 10px;">Most cards add a hidden <strong>2.5% foreign-transaction fee</strong> on every purchase in another currency (including USD online shopping like Amazon.com, Steam, or US subscriptions). On a semester abroad that's real money. These cards charge <strong>0% FX</strong>:</p>
+          <table class="tbl">
+            <thead><tr><th>Card</th><th>FX Fee</th><th>Annual Fee</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">Wealthsimple Card</td><td class="green">0%</td><td class="green">$0</td><td>Best free no-FX option + 1% cash back</td></tr>
+              <tr><td class="bold">Rogers Mastercard</td><td class="green">~0% net</td><td class="green">$0</td><td>3% back on USD offsets the fee</td></tr>
+              <tr><td class="bold">Scotiabank Gold Amex</td><td class="green">0%</td><td class="amber">$120</td><td>No FX + big grocery/dining points</td></tr>
+              <tr><td class="bold">Scotiabank Passport Visa Infinite</td><td class="green">0%</td><td class="amber">$150</td><td>No FX + lounge access for travel</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;font-size:10px;color:var(--cyan-l);">Tip: also carry a no-FX card for online orders from US sites — the fee applies even from your couch. Ask the advisor "what's the best no-FX card for me?"</div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Business Cards — Big 6 + Amex</div>
+            <table class="tbl">
+              <thead><tr><th>Card</th><th>Rewards</th><th>Fee</th></tr></thead>
+              <tbody>
+                <tr><td class="bold">BMO CashBack Business MC</td><td>Cashback on essentials</td><td class="green">$0</td></tr>
+                <tr><td class="bold">Float Corporate Card</td><td>1% cashback + expense tools (incorporated)</td><td class="green">$0</td></tr>
+                <tr><td class="bold">Amex SimplyCash Business</td><td>2% gas/groceries, 1.25% rest</td><td>$0–99</td></tr>
+                <tr><td class="bold">Amex Business Edge</td><td>3x select Canadian biz categories</td><td>$99</td></tr>
+                <tr><td class="bold">Amex Business Gold</td><td>High MR points — bigger spenders</td><td>$199</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">US Institutions Canadians Can Access</div>
+            <div class="info-row"><div class="info-key">Amex Canada</div><div class="info-val green">Full Canadian entity — personal + business cards</div></div>
+            <div class="info-row"><div class="info-key">Capital One Canada</div><div class="info-val green">Full Canadian entity — personal + secured MC</div></div>
+            <div class="info-row"><div class="info-key">Citi Canada</div><div class="info-val">Costco Mastercard (Citi Canada)</div></div>
+            <div class="info-row"><div class="info-key">Amex Global Transfer</div><div class="info-val">Transfer Canadian Amex history to US Amex — requires US address + SSN/ITIN</div></div>
+            <div class="info-row"><div class="info-key">Nova Credit</div><div class="info-val">Translates Canadian credit file for US applications</div></div>
+            <div class="info-row"><div class="info-key">Chase / Discover</div><div class="info-val red">US residents only — no path for Canadians without SSN + US address</div></div>
+          </div>
+        </div>
+
+        <!-- CREDIT UNIONS -->
+        <div class="section-header" style="margin-top:8px;">Credit Unions — Canada's Hidden Credit Weapon</div>
+        <div style="background:rgba(62,198,208,0.06);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:10px 14px;font-size:11px;color:var(--cyan-l);margin-bottom:12px;line-height:1.6;">Credit unions report to both Equifax and TransUnion, offer student accounts with no fees, approve secured cards at lower thresholds than Big 6 banks, and have LOC rates 1–3% below bank rates. They are member-owned — you are a shareholder, not a customer. Open one on Day 1 alongside your Neo card.</div>
+
+        <div class="card">
+          <div class="card-title">The Big 6 Credit Unions in Canada <span class="tag tag-cyan ct-pill">National Heavyweights</span></div>
+          <table class="tbl">
+            <thead><tr><th>Credit Union</th><th>Province</th><th>Members</th><th>Best For</th><th>Any Canadian?</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">Desjardins</td><td>QC + national</td><td>7M+</td><td>Full banking, LOC, mortgage, business</td><td><span class="tag tag-green">Yes (most provinces)</span></td></tr>
+              <tr><td class="bold">Meridian Credit Union</td><td>Ontario</td><td>380K+</td><td>Ontario's largest CU — student accounts, LOC, mortgage</td><td><span class="tag tag-amber">Ontario residents</span></td></tr>
+              <tr><td class="bold">Vancity</td><td>BC</td><td>560K+</td><td>Largest English-speaking CU in Canada</td><td><span class="tag tag-amber">BC residents</span></td></tr>
+              <tr><td class="bold">Coast Capital Savings</td><td>Federal (BC-based)</td><td>600K+</td><td>Only federally chartered CU — any Canadian can join online</td><td><span class="tag tag-green">Yes — any Canadian</span></td></tr>
+              <tr><td class="bold">Servus Credit Union</td><td>Alberta</td><td>400K+</td><td>Alberta's largest — full personal + business banking</td><td><span class="tag tag-amber">Alberta residents</span></td></tr>
+              <tr><td class="bold">First West Credit Union</td><td>BC</td><td>250K+</td><td>Envision + Valley First brands — strong HISA rates</td><td><span class="tag tag-amber">BC residents</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ontario Credit Unions — Primary Targets for Ontario Students</div>
+          <table class="tbl">
+            <thead><tr><th>Credit Union</th><th>Region</th><th>Student Account</th><th>Why Use It</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">Meridian Credit Union</td><td>Province-wide</td><td><span class="tag tag-green">Yes — free</span></td><td>Largest Ontario CU. Best LOC rates. Strong mortgage division. Secured card available.</td></tr>
+              <tr><td class="bold">DUCA Credit Union</td><td>GTA + SW Ontario</td><td><span class="tag tag-green">Yes — free</span></td><td>Youth accounts. Competitive HISA. Easy entry for new members.</td></tr>
+              <tr><td class="bold">Alterna Savings</td><td>Ottawa + Toronto</td><td><span class="tag tag-green">Yes — free</span></td><td>Digital-first. Alterna Bank online arm. HISA available. Good for remote students.</td></tr>
+              <tr><td class="bold">FirstOntario Credit Union</td><td>Hamilton + Niagara</td><td><span class="tag tag-green">Yes</span></td><td>Strong Hamilton/Niagara presence. Student LOC and secured card.</td></tr>
+              <tr><td class="bold">Libro Credit Union</td><td>SW Ontario (London/Windsor)</td><td><span class="tag tag-green">Yes</span></td><td>Strong in Waterloo region. Western, Fanshawe students use this.</td></tr>
+              <tr><td class="bold">Kindred Credit Union</td><td>Waterloo Region</td><td><span class="tag tag-green">Yes</span></td><td>Values-based. Competitive rates. Waterloo/UW/Laurier area.</td></tr>
+              <tr><td class="bold">YNCU (Your Neighbourhood CU)</td><td>Waterloo + Wellington</td><td><span class="tag tag-green">Yes</span></td><td>Merged CU. Youth-friendly. Low barrier to entry.</td></tr>
+              <tr><td class="bold">Kawartha Credit Union</td><td>Peterborough + Durham</td><td><span class="tag tag-green">Yes</span></td><td>Trent University area. Good student services.</td></tr>
+              <tr><td class="bold">Luminus Financial</td><td>Greater Sudbury</td><td><span class="tag tag-green">Yes</span></td><td>Laurentian University area. Northern Ontario students.</td></tr>
+              <tr><td class="bold">Northern Credit Union</td><td>Northern Ontario</td><td><span class="tag tag-green">Yes</span></td><td>Large geography. Sault, Thunder Bay, Sudbury.</td></tr>
+              <tr><td class="bold">Sudbury Credit Union</td><td>Sudbury</td><td><span class="tag tag-green">Yes</span></td><td>Local Sudbury option. Laurentian student base.</td></tr>
+              <tr><td class="bold">Teachers Credit Union</td><td>Ontario-wide</td><td><span class="tag tag-amber">Education sector</span></td><td>Open to education sector families. Competitive rates.</td></tr>
+              <tr><td class="bold">OMISTA Credit Union</td><td>Ontario (online)</td><td><span class="tag tag-green">Yes</span></td><td>Digital access. No branch required. Good for remote students.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">National Credit Unions — Any Canadian Can Join Online</div>
+          <table class="tbl">
+            <thead><tr><th>Institution</th><th>Type</th><th>Account</th><th>Key Feature</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">Coast Capital Savings</td><td>Federal CU</td><td>Free chequing</td><td>Only federally chartered CU. Join online from any province. Strong youth products.</td></tr>
+              <tr><td class="bold">Motus Bank</td><td>Digital (Meridian)</td><td>Free</td><td>Meridian's digital arm. HISA, TFSA, FHSA. Any Canadian. No branch needed.</td></tr>
+              <tr><td class="bold">Achieva Financial</td><td>Digital (Cambrian CU)</td><td>Savings only</td><td>Manitoba-based. Any Canadian joins online. Top-tier HISA/GIC rates nationally.</td></tr>
+              <tr><td class="bold">MAXA Financial</td><td>Digital (Westoba CU)</td><td>Savings only</td><td>Any Canadian. Consistently one of highest HISA rates in Canada.</td></tr>
+              <tr><td class="bold">Outlook Financial</td><td>Digital (Access CU)</td><td>Savings only</td><td>Manitoba-based. Any Canadian. High HISA + GIC rates. CDIC equivalent coverage.</td></tr>
+              <tr><td class="bold">Implicity Financial</td><td>Digital (Entegra CU)</td><td>Savings only</td><td>Any Canadian. HISA + TFSA + RRSP. Competitive rates.</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(29,158,117,0.06);border-radius:var(--radius-sm);border:1px solid rgba(29,158,117,0.15);font-size:10px;color:var(--green-l);">Credit union deposits are insured by DICO (Ontario) or provincial equivalents — up to $250,000, same as CDIC for banks. Federally chartered CUs (Coast Capital, Motus) are CDIC members directly.</div>
+        </div>
+      </div>
+
+      <!-- BONUS STACKING PANEL -->
+      <div class="panel" id="panel-bonuses">
+        <div class="section-header">High-Yield Savings Accounts (HYSA) — Park Your Stacked Cash Here First</div>
+        <div style="background:rgba(62,198,208,0.06);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:10px 14px;font-size:11px;color:var(--cyan-l);margin-bottom:12px;line-height:1.6;">Before stacking bonuses, set up your savings infrastructure. Every chequing bonus you collect should immediately move to a high-interest savings account. Rates change with the Bank of Canada (top accounts are ~3–4% in 2026, with higher promo rates) — ask the advisor for today's best rate before you park cash.</div>
+
+        <div class="card">
+          <div class="card-title">Personal HYSA — Banks & Digital Banks <span class="tag tag-cyan ct-pill">Open first</span></div>
+          <table class="tbl">
+            <thead><tr><th>Institution</th><th>Personal Rate</th><th>TFSA Available</th><th>FHSA Available</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="bold"><a href="https://www.eqbank.ca/personal-banking/savings" target="_blank" style="color:var(--cyan-l);text-decoration:none;">EQ Bank ↗</a></td><td class="green">3.5–4.5%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Best overall. No fees. No min balance. Best TFSA HISA rate in Canada consistently.</td></tr>
+              <tr><td class="bold"><a href="https://www.wealthsimple.com/en-ca/accounts/cash" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Wealthsimple Cash ↗</a></td><td class="green">3.5–4%+</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Premium members earn more. Instant deposit. Integrates with Wealthsimple Invest.</td></tr>
+              <tr><td class="bold"><a href="https://www.koho.ca" target="_blank" style="color:var(--cyan-l);text-decoration:none;">KOHO ↗</a></td><td class="green">3.5%</td><td><span class="tag tag-amber">No</span></td><td><span class="tag tag-amber">No</span></td><td>Earns on entire balance. No extra account needed. Great for daily spending float.</td></tr>
+              <tr><td class="bold"><a href="https://www.simplii.com/en/bank-accounts/no-fee-bank-account.html" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Simplii Financial ↗</a></td><td class="amber">3–5% (promo)</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-amber">No</span></td><td>CIBC's digital arm. Promo rates for new clients (90 days). Free chequing account.</td></tr>
+              <tr><td class="bold"><a href="https://www.tangerine.ca/en/products/saving/savingsaccount/" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Tangerine ↗</a></td><td class="amber">3–5% (promo)</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-amber">No</span></td><td>Scotia's digital arm. Promo rates for new clients (90–180 days). Negotiate extensions.</td></tr>
+              <tr><td class="bold">RBC</td><td class="red">0.01–1%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Terrible HISA rate. Use for chequing bonus only — move cash to EQ Bank immediately.</td></tr>
+              <tr><td class="bold">TD</td><td class="red">0.01–1%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Terrible HISA rate. Same strategy — collect bonus, park elsewhere.</td></tr>
+              <tr><td class="bold">Scotiabank</td><td class="red">0.01–1%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Terrible HISA rate. Collect Scene+ bonus, park cash at EQ Bank.</td></tr>
+              <tr><td class="bold">BMO</td><td class="red">0.01–1%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Terrible HISA rate. Same strategy as all Big 6.</td></tr>
+              <tr><td class="bold">CIBC</td><td class="red">0.01–1%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Terrible HISA rate. Collect bonus, redirect to EQ Bank.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Credit Union HYSA — National Digital CUs with Top Rates</div>
+          <table class="tbl">
+            <thead><tr><th>Institution</th><th>Personal Rate</th><th>TFSA</th><th>RRSP/GIC</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="bold"><a href="https://www.maxafinancial.com" target="_blank" style="color:var(--cyan-l);text-decoration:none;">MAXA Financial (Westoba CU) ↗</a></td><td class="green">~3.5–4.5%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Any Canadian. Consistently among highest rates in Canada. Manitoba-based.</td></tr>
+              <tr><td class="bold"><a href="https://www.achievafinancial.com" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Achieva Financial (Cambrian CU) ↗</a></td><td class="green">~3.5–4.5%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Any Canadian. Online only. Top GIC rates. Fully digital — no branch required.</td></tr>
+              <tr><td class="bold"><a href="https://www.outlookfinancial.com" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Outlook Financial (Access CU) ↗</a></td><td class="green">3.8–5.2%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Any Canadian. Manitoba-based. Competitive GIC + HISA. Strong for locked-in savings.</td></tr>
+              <tr><td class="bold"><a href="https://www.implicityfinancial.com" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Implicity Financial (Entegra CU) ↗</a></td><td class="green">3.8–5.0%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Any Canadian. HISA + TFSA + RRSP. Easy online enrollment.</td></tr>
+              <tr><td class="bold"><a href="https://www.motusbank.ca" target="_blank" style="color:var(--cyan-l);text-decoration:none;">Motus Bank (Meridian) ↗</a></td><td class="green">3.5–4.5%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Any Canadian. Meridian's digital arm. Strong HISA + FHSA. Good for Ontario students.</td></tr>
+              <tr><td class="bold">Meridian Credit Union</td><td class="green">3.0–4.5%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Ontario residents. Branches + digital. FHSA available. Best Ontario CU for full banking.</td></tr>
+              <tr><td class="bold">DUCA Credit Union</td><td class="green">3.0–4.2%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Ontario. GTA-heavy. Competitive HISA + GIC for members.</td></tr>
+              <tr><td class="bold">Alterna Savings</td><td class="green">3.0–4.0%</td><td><span class="tag tag-green">Yes</span></td><td><span class="tag tag-green">Yes</span></td><td>Ontario + national digital arm (Alterna Bank). Good HISA for Ottawa/Toronto students.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Business Savings Accounts — Park Hustle Revenue Here</div>
+          <table class="tbl">
+            <thead><tr><th>Institution</th><th>Business Rate</th><th>Min Balance</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">EQ Bank Business Savings</td><td class="green">3.5–4%+</td><td>$0</td><td>Best business HISA in Canada. No fees. Sole proprietors + incorporated. Pairs with personal EQ Bank.</td></tr>
+              <tr><td class="bold">Wealthsimple Business</td><td class="green">3.5–4%</td><td>$0</td><td>Business cash account. Integrates with Wealthsimple investing. Simple setup for side hustlers.</td></tr>
+              <tr><td class="bold">Coast Capital Business</td><td class="green">2.5–3.5%</td><td>$0</td><td>Federal CU — any Canadian. Strong business banking + HISA for small businesses.</td></tr>
+              <tr><td class="bold">Meridian Business Savings</td><td class="green">2.5–3.5%</td><td>$0</td><td>Ontario businesses. Strong LOC access after 12 months of business banking history.</td></tr>
+              <tr><td class="bold">Motus Bank Business</td><td class="green">3.0–4.0%</td><td>$0</td><td>Digital-first. Any Canadian business. Easy sole prop setup.</td></tr>
+              <tr><td class="bold">Big 6 Business Savings</td><td class="red">0.01–0.5%</td><td>Varies</td><td>Terrible rates. Use Big 6 business chequing for bonus + LOC relationship only. Park cash elsewhere.</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(239,159,39,0.06);border-radius:var(--radius-sm);border:1px solid rgba(239,159,39,0.15);font-size:10px;color:var(--amber);">Rule: Big 6 = collect the bonus + build the relationship. HISA = EQ Bank / MAXA / Achieva. Never park serious cash in a Big 6 savings account.</div>
+        </div>
+
+        <div class="section-header" style="margin-top:8px;">Bank Bonus Stacking Blueprint</div>
+        <div class="grid-3">
+          <div class="metric"><div class="metric-label">6-Month Target</div><div class="metric-value green">$2,000–3,500</div><div class="metric-sub">Personal accounts only</div></div>
+          <div class="metric"><div class="metric-label">12-Month Target</div><div class="metric-value green">$4,000–7,000</div><div class="metric-sub">Personal + business combined</div></div>
+          <div class="metric"><div class="metric-label">Time to Setup</div><div class="metric-value amber">2–3 hrs</div><div class="metric-sub">Then mostly passive</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Big 6 Chequing Bonuses — Current Ranges</div>
+          <table class="tbl">
+            <thead><tr><th>Bank</th><th>Personal Bonus</th><th>Business Bonus</th><th>Hold Period</th><th>Key Requirement</th></tr></thead>
+            <tbody>
+              <tr><td class="bold">RBC</td><td>$300–450</td><td>$300–600</td><td>3–6 months</td><td>Direct deposit</td></tr>
+              <tr><td class="bold">TD</td><td>$300–500</td><td>$350–600</td><td>3–6 months</td><td>Direct deposit + qualifying transactions</td></tr>
+              <tr><td class="bold">Scotiabank</td><td>$300–500</td><td>$300–500</td><td>3–6 months</td><td>Direct deposit + debit purchases</td></tr>
+              <tr><td class="bold">BMO</td><td>$300–450</td><td>$300–500</td><td>3–6 months</td><td>Direct deposit + qualifying transactions</td></tr>
+              <tr><td class="bold">CIBC</td><td>$300–450</td><td>$300–450</td><td>3–6 months</td><td>Direct deposit + active use</td></tr>
+              <tr><td class="bold">Tangerine</td><td>$200–300</td><td>—</td><td>3 months</td><td>Direct deposit + promo HISA 3–5%</td></tr>
+              <tr><td class="bold">Simplii</td><td>$200–400</td><td>—</td><td>3 months</td><td>Direct deposit + promo HISA 3–5%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Updated 6-Month Stacking Sequence</div>
+            <div class="stack-step"><div class="step-num">Day 1</div><div class="step-body"><div class="step-title">Open EQ Bank personal + business savings</div><div class="step-detail">This is your money parking hub for all bonuses collected. 3.5–4.5% HISA. Free. Takes 10 minutes online. All future bonus cash lands here.</div></div></div>
+            <div class="stack-step"><div class="step-num">M1</div><div class="step-body"><div class="step-title">Open highest current Big 6 chequing offer + your first no-fee card</div><div class="step-detail">Monitor churning.ca + redflagdeals.com for the best live offer. Set up direct deposit routing from OSAP or employer. At the same time, apply for a $0-fee rewards card — <strong>Tangerine Money-Back</strong> or <strong>Scotiabank Scene+ Visa</strong> (easy approval, no fee, good everyday rewards).</div></div></div>
+            <div class="stack-step"><div class="step-num">M1–2</div><div class="step-body"><div class="step-title">Open a high-interest savings account</div><div class="step-detail">Alongside EQ Bank, open a second HISA (Wealthsimple Cash, MAXA, or Achieva — any Canadian qualifies) to catch overflow cash at ~3.5–4.5% (verify current rate) while chequing bonuses are pending.</div></div></div>
+            <div class="stack-step"><div class="step-num">M2</div><div class="step-body"><div class="step-title">Meet requirements + open second Big 6</div><div class="step-detail">Meet Month 1 direct deposit requirements. Apply for a second Big 6 account (different bank). Apply for Simplii or Tangerine for the promo HISA + bonus combo.</div></div></div>
+            <div class="stack-step"><div class="step-num">M3</div><div class="step-body"><div class="step-title">First Big 6 bonus arrives → move to HISA immediately</div><div class="step-detail">Transfer bonus cash to EQ Bank / Wealthsimple Cash the same day it posts so it earns interest while the next bonus is pending. If your score is 700+ and you spend on food/groceries, apply for the <strong>Amex Cobalt</strong> (5x dining + groceries) or <strong>Scotia Gold Amex</strong> for the welcome points.</div></div></div>
+            <div class="stack-step"><div class="step-num">M4–6</div><div class="step-body"><div class="step-title">Welcome bonuses + remaining chequing bonuses roll in</div><div class="step-detail">Hit the card welcome-bonus minimum spends using everyday expenses only — never extra spending. Collect the points/cash → park at EQ Bank / Wealthsimple. Travelling or buying from US sites? Add the no-FX <strong>Wealthsimple</strong> or <strong>Rogers</strong> card. Open a business savings (EQ Bank / Float) for hustle revenue.</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Clawback Rules — Non-Negotiable</div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text"><strong>Account must be new</strong> — no existing or recent account with same institution (typically 12–24 month rule)</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text"><strong>Direct deposit required</strong> — must deposit minimum ($500–$2,000/month) within 60–90 days</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text"><strong>Account must stay open</strong> — 3–6 months minimum. Close early = forfeit bonus.</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text"><strong>Credit card minimum spend</strong> — typically $3,000 in 3 months. Use for regular expenses.</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>Bonuses are taxable</strong> — report on T4A or as other income. Track everything.</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>Business accounts separate</strong> — don't count toward personal bonus limits. Open after business registration.</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>Park all cash at EQ Bank / MAXA</strong> — never leave bonus cash sitting in a Big 6 savings account at 0.01%.</div></div>
+            <div style="margin-top:10px;font-size:10px;color:var(--text-3);">Resources: churning.ca · redflagdeals.com/forums · creditcardGenius.ca · ratehub.ca · highinterestsavings.ca</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICES PANEL -->
+      <div class="panel" id="panel-services">
+        <div class="section-header">CoreTrust Services & Pricing</div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Service Menu</div>
+            <table class="tbl">
+              <thead><tr><th>Service</th><th>Price</th><th>Delivery</th></tr></thead>
+              <tbody>
+                <tr><td class="bold">Credit file review + dispute package</td><td class="green">$35–69</td><td>3–5 business days</td></tr>
+                <tr><td class="bold">Credit dispute round (per round)</td><td class="green">$35–59</td><td>Letters drafted</td></tr>
+                <tr><td class="bold">Monthly retainer — Credit + monitoring</td><td class="green">$69/mo</td><td>Ongoing</td></tr>
+                <tr><td class="bold">Monthly retainer — Full stack</td><td class="green">$119/mo</td><td>Ongoing</td></tr>
+                <tr><td class="bold">Bank bonus consultation (1-on-1)</td><td class="green">$35/hr</td><td>Single session</td></tr>
+                <tr><td class="bold">Student/Young Gen strategy session</td><td class="green">$29/hr</td><td>Single session</td></tr>
+                <tr><td class="bold">Canadian Credit Domination Guide</td><td class="amber">$15–29</td><td>Instant download</td></tr>
+                <tr><td class="bold">Business Funding Blueprint</td><td class="amber">$15–29</td><td>Instant download</td></tr>
+                <tr><td class="bold">Bank Bonus Blueprint</td><td class="amber">$15</td><td>Instant download</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">Revenue Targets</div>
+            <div class="prog-wrap"><div class="prog-label"><span>Month 1 Target</span><span class="green">$250–500</span></div><div class="prog-bar"><div class="prog-fill" style="width:20%"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span>Month 3 Target</span><span class="green">$900–1,600/mo</span></div><div class="prog-bar"><div class="prog-fill" style="width:50%"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span>5 Retainer Clients</span><span class="green">$500–900/mo recurring</span></div><div class="prog-bar"><div class="prog-fill" style="width:35%"></div></div></div>
+            <div style="margin-top:16px;">
+              <div class="card-title">Required Before Any Paid Client</div>
+              <div class="rule-item"><div class="rule-icon block">1</div><div class="rule-text">Service Agreement signed</div></div>
+              <div class="rule-item"><div class="rule-icon block">2</div><div class="rule-text">Credit Authorization Form signed (before touching credit file)</div></div>
+              <div class="rule-item"><div class="rule-icon block">3</div><div class="rule-text">10-day cooling-off period disclosed (Ontario CPA 2002)</div></div>
+              <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text">CASL consent on file before any commercial email</div></div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:rgba(62,198,208,0.06);border-radius:var(--radius-sm);border:1px solid var(--border-2);text-align:center;">
+              <div style="font-size:11px;color:var(--text-2);margin-bottom:8px;">Book a free 15-minute intro call</div>
+              <a href="mailto:coretrustc@gmail.com" style="display:inline-block;padding:8px 20px;background:var(--cyan);color:#060A0F;font-size:12px;font-weight:600;border-radius:var(--radius-sm);text-decoration:none;">coretrustc@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPLIANCE PANEL -->
+      <div class="panel" id="panel-compliance">
+        <div class="section-header">What CoreTrust Is — And What It Isn't</div>
+
+        <div class="card">
+          <div class="card-title">What This System Actually Is</div>
+          <p style="font-size:12px;color:var(--text-1);line-height:1.8;margin-bottom:14px;">CoreTrust Consulting is a <strong>free financial information resource</strong>. That's it. The information in this system is based on publicly available programs, consumer rights, financial products, and Canadian law that already exist — we didn't invent any of it. We just compiled it, organized it, and explained it in plain language because most of it isn't promoted to students in any clear way.</p>
+          <p style="font-size:12px;color:var(--text-2);line-height:1.8;margin-bottom:14px;">We are not a financial advisor. We are not a credit counselling agency. We are not affiliated with any bank, credit bureau, government program, or post-secondary institution. We don't have access to your credit file, your OSAP account, or your bank accounts. We don't process anything on your behalf.</p>
+          <p style="font-size:12px;color:var(--text-2);line-height:1.8;">Everything here is general information. What you choose to do with it — which products you open, which programs you apply for, which strategies you pursue — is entirely your decision. Do your own research, verify the details directly with the relevant institution, and make the call that's right for your situation.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">What We Don't Do</div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Tell you what will happen to your credit score</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Guarantee approval for any card, loan, or credit product</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Guarantee removal of any item from your credit file</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Tell you what OSAP amount you'll receive</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Recommend specific products for your specific situation</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Act as your representative to any institution or bureau</div></div>
+            <div class="rule-item"><div class="rule-icon block">✕</div><div class="rule-text">Provide legal or financial advice of any kind</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">What the Law Says Exists (So You Know Your Rights)</div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>Consumer Reporting Act (Ontario)</strong> — You have the right to access your credit file for free and dispute inaccurate information</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>PIPEDA</strong> — You have the right to know what personal information is held about you and how it's used</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>FCAC Act</strong> — Federal financial consumer protections apply to all federally regulated banks</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>Limitations Act 2002 (Ontario)</strong> — A 2-year limitation period exists on most debt collection legal action</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>OSAP Act</strong> — You have the right to appeal your financial assessment if your circumstances change</div></div>
+            <div class="rule-item"><div class="rule-icon ok">✓</div><div class="rule-text"><strong>CPA 2002 (Ontario)</strong> — 10-day cooling-off period applies to internet agreements for services over $50</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Full Disclaimer</div>
+          <p style="font-size:11px;color:var(--text-3);line-height:1.8;">CoreTrust Consulting provides general financial education and informational content only. Nothing on this platform constitutes financial advice, credit counselling, legal advice, or a recommendation specific to your personal financial situation. All information is based on publicly available sources, Canadian consumer law, and publicly listed financial products as of the date of publication. Program details, rates, eligibility criteria, and product features change frequently — always verify directly with the relevant institution, government program, or service provider before making any financial decision. No outcome — including credit score improvement, product approval, bursary eligibility, debt removal, or income result — is guaranteed or implied. Individual results depend entirely on personal circumstances, creditworthiness, institutional policies, and individual action. CoreTrust Consulting is not affiliated with, endorsed by, or partnered with any bank, credit bureau, government body, or post-secondary institution. Use this information as a starting point for your own research, not as a substitute for it.</p>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- STUDENT PROFILE MODAL -->
+<div class="profile-overlay" id="profile-overlay" onclick="closeProfileOutside(event)">
+  <div class="profile-modal" id="profile-modal">
+    <h2>Student Financial Profile</h2>
+    <p>Fill in what you know. The more detail you provide, the more tailored your funding analysis and advice will be. All information stays in your browser.</p>
+
+    <div class="profile-grid">
+      <div class="profile-field">
+        <label>School / University</label>
+        <input type="text" id="pf-school" placeholder="e.g. University of Toronto, Humber College…">
+      </div>
+      <div class="profile-field">
+        <label>Program / Degree</label>
+        <input type="text" id="pf-program" placeholder="e.g. Business Admin, Computer Science…">
+      </div>
+      <div class="profile-field">
+        <label>Year of Study</label>
+        <select id="pf-year">
+          <option value="">Select…</option>
+          <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option>
+          <option>Graduate</option><option>College / Diploma</option><option>Trades / Apprenticeship</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Gender</label>
+        <select id="pf-gender">
+          <option value="">Prefer not to say</option>
+          <option>Male</option><option>Female</option><option>Non-binary</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Ethnicity (optional — affects bursary eligibility)</label>
+        <select id="pf-ethnicity">
+          <option value="">Prefer not to say</option>
+          <option>Black / African Canadian</option><option>Indigenous / First Nations / Métis / Inuit</option>
+          <option>South Asian</option><option>East Asian / Southeast Asian</option>
+          <option>Latino / Hispanic</option><option>Middle Eastern / North African</option>
+          <option>White / European</option><option>Mixed / Multiracial</option><option>Other</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Annual Tuition ($)</label>
+        <input type="number" id="pf-tuition" placeholder="e.g. 7500">
+      </div>
+      <div class="profile-field">
+        <label>Monthly Rent ($) — 0 if living at home</label>
+        <input type="number" id="pf-rent" placeholder="e.g. 900">
+      </div>
+      <div class="profile-field">
+        <label>Books / Supplies per Semester ($)</label>
+        <input type="number" id="pf-books" placeholder="e.g. 600">
+      </div>
+      <div class="profile-field">
+        <label>Residence Fee (if applicable, annual $)</label>
+        <input type="number" id="pf-residence" placeholder="e.g. 10000">
+      </div>
+      <div class="profile-field">
+        <label>Monthly Living Expenses ($)</label>
+        <input type="number" id="pf-living" placeholder="e.g. 1200">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="profile-field">
+        <label>Receiving OSAP?</label>
+        <div class="profile-radio">
+          <label><input type="radio" name="osap" value="yes"> Yes</label>
+          <label><input type="radio" name="osap" value="no"> No</label>
+          <label><input type="radio" name="osap" value="applying"> Applying now</label>
+        </div>
+      </div>
+      <div class="profile-field">
+        <label>Athletic Scholarship / AFA?</label>
+        <div class="profile-radio">
+          <label><input type="radio" name="afa" value="yes"> Yes</label>
+          <label><input type="radio" name="afa" value="no"> No</label>
+          <label><input type="radio" name="afa" value="varsity"> Varsity athlete, no AFA yet</label>
+        </div>
+      </div>
+      <div class="profile-field">
+        <label>Do you have any existing credit?</label>
+        <div class="profile-radio">
+          <label><input type="radio" name="credit" value="none"> No credit at all</label>
+          <label><input type="radio" name="credit" value="some"> 1–2 accounts</label>
+          <label><input type="radio" name="credit" value="building"> Building (3+ accounts)</label>
+        </div>
+      </div>
+      <div class="profile-field">
+        <label>Side hustle status?</label>
+        <div class="profile-radio">
+          <label><input type="radio" name="hustle" value="none"> Not started</label>
+          <label><input type="radio" name="hustle" value="idea"> Have an idea</label>
+          <label><input type="radio" name="hustle" value="active"> Already running</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-field" style="margin-bottom:12px;">
+      <label>Side Hustle Idea or Niche (optional)</label>
+      <input type="text" id="pf-hustle-idea" placeholder="e.g. tutoring math, car detailing, selling Canva templates…">
+    </div>
+
+    <div class="profile-field" style="margin-bottom:16px;">
+      <label>Upload Documents (optional — OSAP notice, acceptance letter, financial aid summary)</label>
+      <div class="upload-zone" onclick="document.getElementById('pf-file').click()">
+        <p id="upload-label">Click to upload PDF, screenshot, or image — I'll read it and fill in your numbers</p>
+        <input type="file" id="pf-file" accept=".pdf,.png,.jpg,.jpeg" style="display:none" onchange="handleFileUpload(this)">
+      </div>
+    </div>
+
+    <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;font-size:11px;color:var(--text-2);cursor:pointer;line-height:1.5;">
+      <input type="checkbox" id="pf-nudges" style="margin-top:2px;accent-color:var(--cyan);">
+      <span>⏰ Email me deadline reminders when funding I'm tracking is about to close. (You can turn this off anytime — every email has an unsubscribe link.)</span>
+    </label>
+
+    <div class="profile-actions">
+      <button class="btn btn-ghost" onclick="closeProfile()">Cancel</button>
+      <button class="btn btn-cyan" onclick="submitProfile()">Generate My Funding Analysis</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let heroActive = true;
+
+const SB_URL = 'https://nhdmnyspqnabpwqiteuc.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG1ueXNwcW5hYnB3cWl0ZXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4OTI5OTQsImV4cCI6MjA5NDQ2ODk5NH0.-dHaLqHQ31MRyrVIvzxP2DnVbAn6vQ5XN1JrGNPHUYc';
+const sb = window.supabase.createClient(SB_URL, SB_ANON);
+let accessToken = null;
+
+let onboarded = false;
+async function refreshSession() {
+  const { data } = await sb.auth.getSession();
+  accessToken = data?.session?.access_token || null;
+  const el = document.getElementById('auth-state');
+  if (el) el.textContent = accessToken ? '● Signed in' : 'Sign in to save progress';
+  if (accessToken && !onboarded) { onboarded = true; setTimeout(() => maybeOnboard(), 600); }
+}
+async function signIn() {
+  const email = prompt('Enter your email for a magic sign-in link:');
+  if (!email) return;
+  const { error } = await sb.auth.signInWithOtp({ email });
+  alert(error ? 'Error: ' + error.message : 'Check your email for the sign-in link.');
+}
+sb.auth.onAuthStateChange(() => refreshSession());
+refreshSession();
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+
+  const titles = {
+    chat: ['Young Gen AI Advisor', 'Ask anything about credit, OSAP, scholarships, or funding'],
+    overview: ['2026 Reality Check', 'What changed and why it matters'],
+    osap: ['OSAP Strategy', 'Float deployment, grace period, and repayment plan'],
+    foundation: ['Credit Foundation', '18-year-old opening stack and statement date trick'],
+    roadmap: ['Year-by-Year Blueprint', 'Pre-start through graduation at 740–780'],
+    hustle: ['Side Hustle System', 'Categories, rotation method, and formalization triggers'],
+    funding: ['Free Money Stack', 'Athletic awards, bursaries, work-study, academic scholarships'],
+    trades: ['Trades & Apprenticeship Path', 'Fastest path to homeownership in Canada'],
+    dispute: ['Dispute Letter Generator', 'Canadian Consumer Reporting Act — bureau and creditor letters'],
+    cards: ['Bank & Card Matrix', 'Secured → unsecured → premium · Big 6 + secondary + US access'],
+    bonuses: ['Bank Bonus Stacking', '$2,000–7,000 legally · personal + business sequence'],
+    services: ['CoreTrust Services', 'Pricing, retainer packages, required documents'],
+    compliance: ['Compliance Framework', 'Hard rules, governing law, jurisdiction stack'],
+  };
+  if (titles[id]) {
+    document.getElementById('page-title').textContent = titles[id][0];
+    document.getElementById('page-sub').textContent = titles[id][1];
+  }
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+      n.classList.add('active');
+    }
+  });
+}
+
+function toggleLetter(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).querySelector('.letter-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(id).querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--cyan-l)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1800);
+  });
+}
+
+function calcOsap() {
+  const total = parseFloat(document.getElementById('osap-total').value) || 0;
+  const tuition = parseFloat(document.getElementById('osap-tuition').value) || 0;
+  const living = parseFloat(document.getElementById('osap-living').value) || 0;
+  const grant = total * 0.25;
+  const loan = total * 0.75;
+  const perSem = total / 2;
+  const afterTuition = perSem - tuition;
+  const afterLiving = afterTuition - (living * 4);
+  const float = Math.max(0, afterLiving);
+  const fmt = v => '$' + v.toLocaleString('en-CA', {maximumFractionDigits:0});
+  document.getElementById('r-grant').textContent = fmt(grant);
+  document.getElementById('r-loan').textContent = fmt(loan);
+  document.getElementById('r-disbursement').textContent = fmt(perSem);
+  document.getElementById('r-after-tuition').textContent = fmt(afterTuition);
+  const alEl = document.getElementById('r-after-living');
+  alEl.textContent = fmt(afterLiving);
+  alEl.className = 'calc-value ' + (afterLiving >= 0 ? 'green' : 'red');
+  const floatEl = document.getElementById('r-float');
+  floatEl.textContent = fmt(float);
+  floatEl.className = 'calc-value ' + (float > 0 ? 'green' : 'red');
+}
+calcOsap();
+
+function calcFunding() {
+  const g = val => parseFloat(document.getElementById(val)?.value) || 0;
+  const grant = g('fc-grant');
+  const loan = g('fc-loan');
+  const bursary = g('fc-bursary');
+  const scholarship = g('fc-scholarship');
+  const workstudy = g('fc-workstudy');
+  const tuition = g('fc-tuition');
+  const rent = g('fc-rent');
+  const living = g('fc-living');
+  const books = g('fc-books');
+
+  const freeTotal = grant + bursary + scholarship + workstudy;
+  const allFunding = freeTotal + loan;
+  const annualExpenses = (rent * 8) + (living * 8) + books;
+  const totalCost = tuition + annualExpenses;
+  const surplus = allFunding - totalCost;
+  const perMonth = surplus / 8;
+  const fmt = n => '$' + Math.abs(Math.round(n)).toLocaleString('en-CA');
+
+  document.getElementById('fc-r-free').textContent = fmt(freeTotal);
+  document.getElementById('fc-r-repay').textContent = fmt(loan);
+  document.getElementById('fc-r-total').textContent = fmt(allFunding);
+  document.getElementById('fc-r-tuit').textContent = fmt(tuition);
+  document.getElementById('fc-r-exp').textContent = fmt(annualExpenses);
+  document.getElementById('fc-r-cost').textContent = fmt(totalCost);
+
+  const summaryEl = document.getElementById('fc-summary');
+  if (surplus >= 0) {
+    summaryEl.style.background = 'rgba(29,158,117,0.08)';
+    summaryEl.style.borderColor = 'rgba(29,158,117,0.25)';
+    summaryEl.innerHTML = `<span style="color:var(--green-l);font-weight:600;">You have an estimated ${fmt(surplus)} left over</span> after tuition and all living costs for the academic year — about <span style="color:var(--green-l);font-weight:600;">${fmt(perMonth)}/month</span>. <strong style="color:var(--text-1);">Note:</strong> Any loan portion in that surplus is repayable — treat it differently from grant and bursary money. The surplus from non-repayable sources (grant + bursary + scholarship + work-study) is <span style="color:var(--green-l);font-weight:600;">${fmt(Math.max(0, freeTotal - totalCost))}</span>.`;
+  } else {
+    summaryEl.style.background = 'rgba(226,75,74,0.06)';
+    summaryEl.style.borderColor = 'rgba(226,75,74,0.18)';
+    summaryEl.innerHTML = `<span style="color:var(--red);font-weight:600;">Estimated shortfall of ${fmt(surplus)}</span> — your current funding doesn't fully cover tuition + living costs. You'd need about <span style="color:var(--red);font-weight:600;">${fmt(-perMonth)}/month</span> in additional income or a reduction in costs to break even. Check whether you've applied for all internal school bursaries, and use the official OSAP Aid Estimator to confirm your actual award amounts before finalizing your budget.`;
+  }
+}
+calcFunding();
+
+// Chat
+const BOT_RESPONSES = {
+  default: [
+    "Honestly, the best place to start if you have zero credit is just getting something open. Credit age is 15% of your score and you can never go back in time to fix it — so the earlier you open a tradeline, the better your file looks years from now. Neo Financial has a secured card with no annual fee and a $50 minimum deposit. That's where most Canadians with no credit start. You don't need multiple things at once. One card, paid on time, consistently — that's the foundation. If a parent is willing to add you as an authorized user on a card they've had for years, that's another option worth looking into because their account history can appear on your file immediately.",
+    "The statement date thing is one of those details that actually matters but nobody ever explains properly. Your credit score is calculated based on the balance on your statement date — not your payment history, not your limit, the balance the day your statement generates. So if you have a $500 limit and carry $250 to statement date, the bureau reports 50% utilization. If you pay it down to $15 before statement closes, the bureau sees 3%. Same card, same spending month, totally different score impact. Find your statement date in your card app and put a recurring reminder in your phone three days before it.",
+    "Credit in Canada runs through two bureaus — Equifax and TransUnion. Not every product reports to both. Some report to one, some to both. When you pull your credit reports — which you can do free at equifax.ca and transunion.ca — you'll sometimes see different things on each. That's normal. The goal over time is to have multiple accounts reporting to both, paid on time, with low balances. That's really the whole thing.",
+    "Good question and honestly the answer depends entirely on where you're at right now. If you have no credit, the goal is just to start — get one thing open, keep it clean. If you have some credit but made some early mistakes, there are options for rebuilding. If you're already building, the next step is usually adding a different type of account or increasing your available credit limit. What's your current situation?",
+  ],
+  osap: "So OSAP changed pretty significantly in 2026 — the grant portion dropped from 85% to 25%, which means 75% of what most students get is now loan money, not free money. That distinction matters because a lot of people treat the whole disbursement as income and spend accordingly, then six months after graduating they're surprised by a repayment notice. The grant portion is yours, tax-free, no repayment. The loan portion starts accruing interest 6 months after you stop being a full-time student. The move is to know what your actual numbers are before you spend anything. Use the OSAP calculator in the Student Module to estimate — plug in your total award, tuition, and living costs and it'll show you what's actually left. Most OSAP recipients are also automatically eligible for internal school bursaries, which is a separate pot of money that doesn't reduce your OSAP and requires a separate application to your school's financial aid office.",
+  credit: "Starting from zero is actually not a bad spot — it just means the clock hasn't started yet. The basics: credit in Canada is tracked by Equifax and TransUnion. Products that build your file are things like credit cards, loans, and certain reporting services. For starting fresh, a secured card is the most common entry point — you put down a deposit that becomes your limit, and it reports like any regular card. Neo Financial's secured card is no-fee with a $50 minimum deposit and reports to both bureaus. If you're already paying rent, Neo also has a rent reporting feature, and Borrowell Rent Advantage is another option that reports rent to Equifax — both essentially turn a payment you're already making into credit-building activity. Worth comparing both before picking one. The Credit Foundation section of this system has a more detailed breakdown of all the options and how they work.",
+  scholarship: "The funding landscape for Canadian students has more layers than most people realize. If you're a varsity athlete, U Sports Athletic Financial Awards can cover tuition and compulsory fees — that's separate from OSAP. The two can coexist, and in fact having an AFA that reduces your tuition can shift your OSAP calculation in your favour by lowering your assessed need. On top of that, most students who receive OSAP are eligible for internal school bursaries — these are offered by your institution, not the province, and require a separate application through your school's financial aid office, usually in October-November and January. A lot of students skip this step entirely. External bursaries are another layer — Yconic and ScholarTree are the main search databases. Most people apply to two or three. The ones who put in the time to apply to ten or more consistently get something back. The Free Money Stack section has a full breakdown of the stacking approach.",
+  trades: "The trades path is honestly underrated when you run the actual numbers. You're done in 1–3 years instead of 4. You're earning T4 employment income during your apprenticeship — not gig work, actual employment income that you can use to qualify for credit products. The Canada Apprentice Loan gives you up to $4,000 per training period with no interest while you're registered. And when you come out with a Red Seal at 22–24, earning $70–100K, with 2–3 years of clean credit history built during your apprenticeship, you're having a mortgage conversation that most university graduates won't be in until their late 20s. The credit path is the same starting point — a secured card, keep it clean — but the T4 income you have as a registered apprentice makes you an easier approval for an unsecured card and a line of credit much earlier. The Trades section of this system has the full breakdown including the Canada Apprentice Loan application process.",
+  dispute: "Worth knowing upfront: in Canada you can only dispute information that is factually wrong. You can't dispute a negative item just because it's hurting your score — it has to be inaccurate. The two bureaus are Equifax Canada and TransUnion Canada, and you have the right to access both reports for free at equifax.ca and transunion.ca. If you find something inaccurate — a balance that's wrong, an account that doesn't belong to you, a debt that's past the 6-year reporting limit from date of last activity — you have the right under the Consumer Reporting Act to dispute it in writing. The bureau has 30 business days to investigate. The Dispute Letters section of this system has templates for the most common dispute types — initial bureau dispute, obsolete debt removal, unauthorized inquiry removal, goodwill deletion, and pay-for-delete. Always send by registered mail and keep the tracking number.",
+  banking: "The Big 6 banks run welcome offers on their chequing accounts pretty much year-round, and the bonuses are real — typically $300–500 for personal accounts and sometimes more for business accounts. The conditions usually involve setting up a direct deposit and making a certain number of transactions within 60–90 days, then keeping the account open for 3–6 months. The math is pretty straightforward: collect the bonus, then transfer all that cash to a high-yield savings account somewhere that actually pays you. EQ Bank and the digital credit union platforms like MAXA Financial and Achieva Financial consistently offer 3.5–5.5% on savings — the Big 6 pay almost nothing on their savings products. churning.ca and redflagdeals.com track the current live offers if you want to see what's running right now.",
+  hysa: "High-yield savings accounts in Canada are almost entirely outside the Big 6 banks — those accounts pay almost nothing, often under 0.5%. The best regular savings rates in Canada right now are at EQ Bank, which accepts any Canadian and has no fees or minimum balance. For even higher rates, the digital credit union platforms are worth knowing about: MAXA Financial, Achieva Financial, Outlook Financial, and Implicity Financial are all digital-only, open to any Canadian, and have consistently competitive rates — sometimes 4–5.5%+ depending on the product. All of these have deposit insurance through provincial equivalents. If you have any money sitting in a Big 6 savings account, it's worth moving it somewhere it's actually earning something while you decide what to do with it.",
+  general_money: "The way most of this works — credit, OSAP, bursaries, banking programs — is that the information is publicly available. The programs exist. The rights exist. What doesn't exist is anyone explaining it clearly to students before they walk in and make expensive decisions without knowing the full picture. That's what this system is trying to do: just put the information in one place in plain language. If you have a more specific question about your own situation — what you're working with, what you're trying to figure out — give me more context and I'll share whatever information I have that might be relevant.",
+};
+
+function getBotResponse(input) {
+  const lower = input.toLowerCase();
+  if (lower.includes('osap') || lower.includes('float') || lower.includes('loan')) return BOT_RESPONSES.osap;
+  if (lower.includes('credit') && (lower.includes('build') || lower.includes('start') || lower.includes('zero') || lower.includes('stack'))) return BOT_RESPONSES.credit;
+  if (lower.includes('scholarship') || lower.includes('bursary') || lower.includes('athletic') || lower.includes('award') || lower.includes('free money')) return BOT_RESPONSES.scholarship;
+  if (lower.includes('trade') || lower.includes('apprentice') || lower.includes('red seal') || lower.includes('electrician') || lower.includes('plumber')) return BOT_RESPONSES.trades;
+  if (lower.includes('dispute') || lower.includes('equifax') || lower.includes('transunion') || lower.includes('remove') || lower.includes('error')) return BOT_RESPONSES.dispute;
+  if (lower.includes('bank') || lower.includes('chequing') || lower.includes('welcome offer') || lower.includes('sign up bonus') || lower.includes('bonus stack')) return BOT_RESPONSES.banking;
+  if (lower.includes('hysa') || lower.includes('high yield') || lower.includes('savings account') || lower.includes('eq bank') || lower.includes('maxa') || lower.includes('achieva')) return BOT_RESPONSES.hysa;
+  if (lower.includes('money') || lower.includes('budget') || lower.includes('finance') || lower.includes('afford') || lower.includes('expensive') || lower.includes('cost')) return BOT_RESPONSES.general_money;
+  return BOT_RESPONSES.default[Math.floor(Math.random() * BOT_RESPONSES.default.length)];
+}
+
+function activateChat() {
+  if (heroActive) {
+    heroActive = false;
+    document.getElementById('chat-hero').style.display = 'none';
+    document.getElementById('chat-messages').style.display = 'flex';
+    document.getElementById('quick-prompts').style.display = 'flex';
+  }
+}
+
+function addMessage(text, isUser) {
+  activateChat();
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg' + (isUser ? ' user' : '');
+  const time = new Date().toLocaleTimeString('en-CA', {hour: '2-digit', minute: '2-digit'});
+  div.innerHTML = `
+    <div class="msg-avatar ${isUser ? 'user' : 'bot'}">${isUser ? 'You' : 'CT'}</div>
+    <div>
+      <div class="msg-bubble">${text.replace(/\n/g, '<br>').replace(/\((\d)\)/g, '<span style="color:var(--cyan)">($1)</span>').replace(/→/g, '<span style="color:var(--green)">→</span>')}</div>
+      <div class="msg-time">${isUser ? 'You' : 'CoreTrust'} · ${time}</div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar bot">CT</div><div><div class="msg-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+const conversation = []; // {role, content}
+
+async function generateFundingPlan() {
+  if (!accessToken) { alert('Please sign in first — I build your plan from your saved profile.'); return; }
+  activateChat();
+  addMessage('Generate my personalized funding plan.', true);
+  addTyping();
+  try {
+    const res = await fetch('/api/deliverable', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: 'Bearer ' + accessToken },
+      body: JSON.stringify({ type: 'funding_plan', title: 'My Funding Plan' }),
+    });
+    const data = await res.json();
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    if (res.ok) {
+      lastPlanContent = data.content;
+      addMessage(data.content + '\n\n💾 Tap "⬇ Download plan (PDF)" below to save a branded copy.', false);
+    } else {
+      addMessage(data.error || 'Could not generate your plan right now.', false);
+    }
+  } catch (e) {
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    addMessage('Sorry — plan generation failed. Try again in a moment.', false);
+  }
+}
+
+let lastPlanContent = null;
+
+// ⬇ Branded PDF export of the last generated plan (print-to-PDF)
+function downloadPlan() {
+  if (!lastPlanContent) { alert('Generate your funding plan first — then download it here.'); return; }
+  const w = window.open('', '_blank');
+  const esc = lastPlanContent.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  w.document.write(`<!DOCTYPE html><html><head><title>My CoreTrust Funding Plan</title><style>
+    body{font-family:-apple-system,Arial,sans-serif;color:#10222b;max-width:760px;margin:32px auto;padding:0 24px;line-height:1.6;}
+    .head{display:flex;align-items:center;gap:12px;border-bottom:3px solid #3EC6D0;padding-bottom:14px;margin-bottom:22px;}
+    .mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#9af0f7,#3EC6D0);display:flex;align-items:center;justify-content:center;font-weight:900;color:#021014;}
+    h1{font-size:22px;margin:0;} small{color:#5b6b73;}
+    pre{white-space:pre-wrap;font-family:inherit;font-size:14px;}
+    .foot{margin-top:28px;padding-top:12px;border-top:1px solid #dfe6e9;font-size:11px;color:#5b6b73;}
+    @media print{.noprint{display:none;}}
+  </style></head><body>
+    <div class="head"><div class="mark">CT</div><div><h1>My Funding Plan</h1><small>CoreTrust Young Gen · generated ${new Date().toLocaleDateString('en-CA')}</small></div></div>
+    <pre>${esc}</pre>
+    <div class="foot">CoreTrust Consulting · Brampton, ON · Educational and strategic guidance only — not legal or financial advice. No guaranteed outcomes; programs subject to eligibility. coretrustc@gmail.com</div>
+    <button class="noprint" onclick="window.print()" style="margin-top:16px;padding:10px 20px;background:#3EC6D0;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Save as PDF</button>
+  </body></html>`);
+  w.document.close();
+}
+
+// 🔍 What am I missing? — ranked unclaimed funding
+async function runAudit() {
+  if (!accessToken) { alert('Sign in first — the audit ranks funding against YOUR profile.'); return; }
+  activateChat();
+  addMessage('What funding am I missing?', true);
+  addTyping();
+  try {
+    const res = await fetch('/api/audit', { headers: { authorization: 'Bearer ' + accessToken } });
+    const data = await res.json();
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    if (!res.ok) { addMessage(data.error || 'Audit failed — try again.', false); return; }
+    if (!data.missing.length) { addMessage('Clean sheet — nothing obvious missing for your profile right now. Update your profile or ask me to dig deeper.', false); return; }
+    const lines = data.missing.slice(0, 10).map((m, i) =>
+      `${i + 1}. ${m.name}${m.amount ? ' — ' + m.amount : ''}${m.deadline ? ' (deadline: ' + m.deadline + ')' : ''}`).join('\n');
+    const note = data.profile_complete ? '' : '\n\n⚠️ Your profile is thin — fill in school + province for sharper matches.';
+    addMessage(`🔍 FUNDING YOU'RE NOT TRACKING YET (best fit first):\n\n${lines}${note}\n\nSay "track #2" or "add ${data.missing[0].name} to my tracker" and I'll remember it. Eligibility varies — verify each program.`, false);
+  } catch (e) {
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    addMessage('Audit failed — try again in a moment.', false);
+  }
+}
+
+// 📌 My applications tracker
+async function showTracker() {
+  if (!accessToken) { alert('Sign in to see your application tracker.'); return; }
+  activateChat();
+  addMessage('Show my applications.', true);
+  addTyping();
+  try {
+    const res = await fetch('/api/applications', { headers: { authorization: 'Bearer ' + accessToken } });
+    const data = await res.json();
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    if (!res.ok) { addMessage(data.error || 'Could not load your tracker.', false); return; }
+    if (!data.applications.length) { addMessage('Your tracker is empty. Run "🔍 What am I missing?" and tell me which ones to track — I\'ll watch the deadlines for you.', false); return; }
+    const icon = { saved: '📎', in_progress: '✍️', applied: '📨', won: '🏆', lost: '❌' };
+    const lines = data.applications.map((a) =>
+      `${icon[a.status] || '📎'} ${a.funding_name} — ${a.status.replace('_', ' ')}${a.deadline ? ' · due ' + a.deadline : ''}${a.amount ? ' · ' + a.amount : ''}`).join('\n');
+    const due = (data.due || []).length ? `\n\n⏰ CLOSING SOON:\n${data.due.map((d) => `• ${d.funding_name} — ${d.days_left < 0 ? 'OVERDUE' : d.days_left + ' day(s) left'}`).join('\n')}` : '';
+    addMessage(`📌 YOUR APPLICATIONS:\n\n${lines}${due}\n\nTell me any update — "mark Loran as applied", "I won the entrance scholarship" — and I'll keep it current.`, false);
+  } catch (e) {
+    const t = document.getElementById('typing-indicator'); if (t) t.remove();
+    addMessage('Tracker failed — try again in a moment.', false);
+  }
+}
+
+// ⏰ Nudge banner — deadlines closing soon, shown on sign-in
+async function checkNudges() {
+  if (!accessToken) return;
+  try {
+    const res = await fetch('/api/applications', { headers: { authorization: 'Bearer ' + accessToken } });
+    if (!res.ok) return;
+    const data = await res.json();
+    const due = data.due || [];
+    let bar = document.getElementById('nudge-bar');
+    if (!due.length) { if (bar) bar.remove(); return; }
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'nudge-bar';
+      bar.style.cssText = 'background:linear-gradient(90deg,rgba(239,159,39,.15),rgba(62,198,208,.12));border:1px solid rgba(239,159,39,.4);border-radius:10px;margin:8px 14px;padding:10px 14px;font-size:12px;color:#f6d9a7;cursor:pointer;';
+      bar.onclick = showTracker;
+      const chat = document.querySelector('.chat-panel');
+      if (chat) chat.insertBefore(bar, chat.firstChild);
+    }
+    const first = due[0];
+    bar.textContent = `⏰ ${first.funding_name} ${first.days_left < 0 ? 'is OVERDUE' : first.days_left === 0 ? 'closes TODAY' : 'closes in ' + first.days_left + ' day(s)'}${due.length > 1 ? ' · +' + (due.length - 1) + ' more closing soon' : ''} — tap to view`;
+  } catch (e) { /* silent */ }
+}
+
+// Onboarding wizard: first sign-in with an empty profile → open profile setup
+async function maybeOnboard() {
+  if (!accessToken) return;
+  try {
+    const { data } = await sb.auth.getUser();
+    const uid = data?.user?.id; if (!uid) return;
+    const { data: prof } = await sb.from('profiles').select('school,province').eq('id', uid).single();
+    if (!prof || !prof.school) {
+      openProfile();
+      const label = document.getElementById('upload-label');
+      if (label) label.textContent = '👋 60-second setup: fill what you know, or upload your OSAP/offer letter and I\'ll read it for you.';
+    } else {
+      checkNudges();
+    }
+  } catch (e) { openProfile(); }
+}
+
+async function fetchAdvisorReply(userText) {
+  conversation.push({ role: 'user', content: userText });
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      ...(accessToken ? { authorization: 'Bearer ' + accessToken } : {}),
+    },
+    body: JSON.stringify({ messages: conversation }),
+  });
+  if (!res.ok) return 'Sorry — the advisor is temporarily unavailable. Try again in a moment.';
+  const data = await res.json();
+  conversation.push({ role: 'assistant', content: data.reply });
+  return data.reply;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, true);
+  input.value = '';
+  input.style.height = '';
+  addTyping();
+  fetchAdvisorReply(text).then((reply) => {
+    const typing = document.getElementById('typing-indicator');
+    if (typing) typing.remove();
+    addMessage(reply, false);
+  });
+}
+
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
+}
+
+function heroSend(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = '';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// Profile modal
+function openProfile() { document.getElementById('profile-overlay').classList.add('open'); }
+function closeProfile() { document.getElementById('profile-overlay').classList.remove('open'); }
+function closeProfileOutside(e) { if (e.target === document.getElementById('profile-overlay')) closeProfile(); }
+
+async function handleFileUpload(input) {
+  const label = document.getElementById('upload-label');
+  if (!(input.files && input.files[0])) return;
+  const file = input.files[0];
+  if (!accessToken) { label.textContent = 'Sign in first so I can read this into your profile.'; label.style.color = 'var(--amber)'; return; }
+  if (file.size > 4 * 1024 * 1024) { label.textContent = 'File too large — max 4MB.'; label.style.color = 'var(--amber)'; return; }
+  label.textContent = '⏳ Reading ' + file.name + '…'; label.style.color = 'var(--cyan-l)';
+  try {
+    const base64 = await new Promise((ok, err) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = err; r.readAsDataURL(file); });
+    const res = await fetch('/api/intake-doc', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: 'Bearer ' + accessToken },
+      body: JSON.stringify({ base64, mediaType: file.type || 'image/png' }),
+    });
+    const data = await res.json();
+    if (!res.ok) { label.textContent = data.error || 'Could not read that document.'; label.style.color = 'var(--amber)'; return; }
+    label.textContent = '✓ Read it! ' + (data.extracted?.summary || 'Profile updated from your document.');
+    label.style.color = 'var(--green-l)';
+    const a = data.extracted?.amounts || {};
+    if (a.tuition != null) document.getElementById('pf-tuition').value = a.tuition;
+  } catch (e) {
+    label.textContent = 'Upload failed — try again.'; label.style.color = 'var(--amber)';
+  }
+}
+
+function submitProfile() {
+  const school = document.getElementById('pf-school').value || 'your school';
+  const program = document.getElementById('pf-program').value || 'your program';
+  const year = document.getElementById('pf-year').value || 'current year';
+  const gender = document.getElementById('pf-gender').value || '';
+  const ethnicity = document.getElementById('pf-ethnicity').value || '';
+  const tuition = parseFloat(document.getElementById('pf-tuition').value) || 0;
+  const rent = parseFloat(document.getElementById('pf-rent').value) || 0;
+  const books = parseFloat(document.getElementById('pf-books').value) || 0;
+  const residence = parseFloat(document.getElementById('pf-residence').value) || 0;
+  const living = parseFloat(document.getElementById('pf-living').value) || 0;
+  const hustleIdea = document.getElementById('pf-hustle-idea').value || '';
+
+  const osapEl = document.querySelector('input[name="osap"]:checked');
+  const afaEl = document.querySelector('input[name="afa"]:checked');
+  const creditEl = document.querySelector('input[name="credit"]:checked');
+  const hustleEl = document.querySelector('input[name="hustle"]:checked');
+
+  const osap = osapEl ? osapEl.value : 'unknown';
+  const afa = afaEl ? afaEl.value : 'no';
+  const credit = creditEl ? creditEl.value : 'none';
+  const hustle = hustleEl ? hustleEl.value : 'none';
+
+  const totalAnnual = tuition + (rent * 12) + (books * 2) + residence + (living * 12);
+
+  // Build tailored funding analysis
+  const bursaryLines = [];
+  if (osap === 'yes' || osap === 'applying') bursaryLines.push('→ Canada Student Grant (auto via OSAP — up to $3,000/yr)');
+  if (osap === 'yes' || osap === 'applying') bursaryLines.push('→ OSOG Ontario Grant (auto via OSAP — reduces repayable loan)');
+  if (ethnicity.includes('Black') || ethnicity.includes('African')) bursaryLines.push('→ Black Excellence Scholarship (various schools + Unifor + RBC Future Launch)');
+  if (ethnicity.includes('Indigenous')) bursaryLines.push('→ Indspire (up to $7,000/yr), FNFMB post-secondary, band funding, Gabriel Dumont Institute');
+  if (ethnicity.includes('South Asian') || ethnicity.includes('East Asian')) bursaryLines.push('→ Asian community foundation bursaries — apply through Yconic + your school financial aid office');
+  if (gender === 'Female') bursaryLines.push('→ Women in STEM bursaries (if applicable), Soroptimist awards, CFUW scholarships');
+  if (afa === 'yes' || afa === 'varsity') bursaryLines.push('→ U Sports Athletic Financial Award (tuition + compulsory fees — apply through your athletic dept)');
+  bursaryLines.push('→ Internal school bursary (financial aid office — apply Oct/Nov and Jan/Feb every year)');
+  bursaryLines.push('→ Yconic + ScholarTree — apply to minimum 10 external scholarships');
+  if (osap === 'yes' || osap === 'applying') bursaryLines.push('→ Work-study program — available to OSAP recipients, $15–20/hr on-campus');
+  bursaryLines.push('→ Canada Summer Jobs (federal) — apply each December for following summer');
+
+  const creditAdvice = credit === 'none'
+    ? 'You have no credit yet — this is priority #1. Open Neo Financial secured card this week. Add KOHO ($7/mo). Get added as authorized user on a parent\'s card if possible. Your score can hit 660–700 within 6 months.'
+    : credit === 'some'
+    ? 'You have 1–2 accounts. Next step: add Borrowell Rent Advantage if you\'re renting ($8/mo to Equifax). Apply for a credit union share-secured loan to add an installment tradeline. Statement date trick every month.'
+    : 'You\'re building already — focus on keeping utilization under 10%, never missing payments, and applying for your first unsecured card if you\'re at 700+.';
+
+  const hustleAdvice = hustleIdea
+    ? `Your hustle idea: "${hustleIdea}" — here's how to start: (1) Start this week with 1–2 clients, even free or discounted to build reviews. (2) Charge market rate by Week 3. (3) Open a CU business chequing account by Month 2. (4) File T2125 at tax time — 2 years of income = LOC eligibility.`
+    : hustle === 'none'
+    ? 'No hustle started yet — easiest $0 start: tutoring in your program subject ($25–50/hr, first client from your class), or KOHO/Neo referrals ($20–25 each, share your link). Either earns your first $100 within 2 weeks.'
+    : hustle === 'idea'
+    ? 'You have an idea — now execute. First client this week, even at a discount. Revenue before perfection.'
+    : 'You\'re already running — focus on formalizing (sole prop registration + business account) and filing T2125 to build your income paper trail for future LOC.';
+
+  const msg = `📋 PROFILE ANALYSIS — ${school} · ${program} · ${year}
+
+ANNUAL COST BREAKDOWN:
+→ Tuition: $${tuition.toLocaleString('en-CA')}
+→ Rent (annual): $${(rent * 12).toLocaleString('en-CA')}
+→ Books/supplies: $${(books * 2).toLocaleString('en-CA')}
+→ Residence: $${residence.toLocaleString('en-CA')}
+→ Living expenses: $${(living * 12).toLocaleString('en-CA')}
+→ TOTAL ANNUAL COST: $${totalAnnual.toLocaleString('en-CA')}
+
+FUNDING SOURCES TO APPLY FOR (tailored to you):
+${bursaryLines.join('\n')}
+
+CREDIT PATH:
+${creditAdvice}
+
+HUSTLE STRATEGY:
+${hustleAdvice}
+
+NEXT STEPS THIS WEEK:
+→ Go to your school's Financial Aid Office website and apply for internal bursaries
+→ Create a Yconic account and apply to 10+ scholarships this month
+→ If OSAP recipient: confirm you're registered for work-study through your student portal
+→ Check if your school has a Black/Indigenous/cultural student centre — they often have exclusive bursary lists not on the main website`;
+
+  // Persist to the student's saved profile (RLS: own row only) when signed in.
+  if (accessToken) {
+    sb.auth.getUser().then(({ data }) => {
+      const uid = data?.user?.id;
+      if (!uid) return;
+      sb.from('profiles').upsert({
+        id: uid, school, program, study_year: year,
+        province: guessProvince(school),
+        email_opt_in: document.getElementById('pf-nudges')?.checked || false,
+        demographics: { gender, ethnicity, athlete: afa === 'yes' || afa === 'varsity', hustle },
+        financials: { tuition, rentMonthly: rent, booksPerTerm: books, residence, livingMonthly: living, hustleIdea },
+      }).then(() => checkNudges());
+    });
+  }
+
+  closeProfile();
+  showPanel('chat');
+  document.getElementById('chat-input').value = 'Can you analyze my student profile and tell me what I should do?';
+  sendMessage();
+  setTimeout(() => {
+    const typing = document.getElementById('typing-indicator');
+    if (typing) typing.remove();
+    addMessage(msg, false);
+  }, 800);
+}
+
+function guessProvince(school) {
+  const s = (school || '').toLowerCase();
+  if (/ubc|sfu|uvic|langara|douglas|camosun|fraser valley|okanagan/.test(s)) return 'BC';
+  if (/alberta|calgary|nait|sait|lethbridge|macewan|mount royal/.test(s)) return 'AB';
+  if (/saskat|regina/.test(s)) return 'SK';
+  if (/manitoba|winnipeg|brandon/.test(s)) return 'MB';
+  if (/mcgill|concordia|laval|montreal|sherbrooke|uqam|bishop/.test(s)) return 'QC';
+  if (/dalhousie|acadia|saint mary|st\. ?fx|cape breton|nscc/.test(s)) return 'NS';
+  if (/new brunswick|moncton|mount allison|crandall/.test(s)) return 'NB';
+  if (/memorial|newfoundland/.test(s)) return 'NL';
+  if (/upei|prince edward|holland college/.test(s)) return 'PE';
+  return 'ON';
+}
+
+// Extended bot responses for side hustles
+const HUSTLE_RESPONSES = {
+  zero: "Best $0 startup hustles for students: (1) Tutoring — post in your class group chat tonight. $25–50/hr. First client within a week. (2) KOHO/Neo/EQ Bank referrals — share your referral link, earn $20–25 per signup. (3) Resume writing — $50–150 per resume, no overhead. (4) Freelance writing — find clients on Upwork or Fiverr. (5) Selling your class notes on Yconic or StudySoup. (6) Campus ambassador programs — brands like Redbull, Uber, Bumble pay students $200–500/mo to promote on campus. Zero startup, easy first dollars.",
+  tutoring: "Tutoring business launch: (1) Identify your 2–3 strongest subjects. (2) Post in your course group chat: 'Offering tutoring for [Course Code] — $30/hr, first session free.' (3) First client this week. (4) After 3 clients, raise to $40/hr. (5) List on Wyzant.ca or Tutor Doctor for inbound leads. (6) At 5+ regular clients: register sole prop, open CU business chequing, file T2125 — this becomes verifiable income for your LOC application at age 20–21. Top tutors at university level charge $60–80/hr by year 3.",
+  niche: "Finding your hustle niche: Ask yourself 3 questions — (1) What do people already ask me for help with? (2) What can I do or make that takes me less time than it takes others? (3) What's around me that people need but don't want to do themselves? For students: your niche is usually your program (tutoring), your campus area (moving help in Sept/April, car detailing, food delivery), or your digital skills (video editing, Canva, social media). Start with what's closest to where you already are. The fastest money is always in services, not products — no inventory, no shipping, instant payment.",
+};
+
+const origGetBotResponse = getBotResponse;
+getBotResponse = function(input) {
+  const lower = input.toLowerCase();
+  if ((lower.includes('hustle') || lower.includes('side')) && lower.includes('zero')) return HUSTLE_RESPONSES.zero;
+  if (lower.includes('tutoring') || lower.includes('tutor')) return HUSTLE_RESPONSES.tutoring;
+  if (lower.includes('niche') || lower.includes('which hustle') || lower.includes('what hustle') || lower.includes('fits my')) return HUSTLE_RESPONSES.niche;
+  if (lower.includes('hustle') || lower.includes('side income') || lower.includes('make money')) return HUSTLE_RESPONSES.niche;
+  return origGetBotResponse(input);
+};
+</script>
+</body>
+</html>
+
+
