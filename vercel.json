@@ -1,6 +1,7 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/CoreTrust_CTC_GEM_Simplified_Guide", "dest": "/CoreTrust_CTC_GEM_Simplified_Guide.html" },
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/admin", "dest": "/admin.html" },
     { "src": "/admin.html", "dest": "/admin.html" },
