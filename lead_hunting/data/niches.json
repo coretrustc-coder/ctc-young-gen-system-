@@ -1,0 +1,84 @@
+{
+  "niches": [
+    {
+      "name": "Barbershops & Salons",
+      "priority": 1,
+      "avgDealSize": 600,
+      "retainerPotential": 300,
+      "searchTerms": ["barber", "barbershop", "hair salon", "beauty salon", "grooming"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Hamilton"],
+      "pain": "Phone-only booking, no online presence, losing walk-ins to competitors with websites",
+      "pitch": "Digital Storefront package — website + booking system + Google Business setup"
+    },
+    {
+      "name": "Independent Restaurants",
+      "priority": 1,
+      "avgDealSize": 2000,
+      "retainerPotential": 500,
+      "searchTerms": ["restaurant", "takeout", "pizzeria", "shawarma", "roti", "jerk chicken", "pho"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Hamilton", "Waterloo"],
+      "pain": "Paying 30% commission to Skip/Uber/DoorDash, cold food complaints, no brand control",
+      "pitch": "Direct ordering system — own website with online ordering, zero commission, monthly retainer"
+    },
+    {
+      "name": "Trades Contractors",
+      "priority": 2,
+      "avgDealSize": 1500,
+      "retainerPotential": 400,
+      "searchTerms": ["plumber", "electrician", "HVAC", "landscaping", "roofing", "painting", "renovation"],
+      "cities": ["Brampton", "Mississauga", "Hamilton", "Guelph", "London"],
+      "pain": "Relying on word-of-mouth, losing to competitors ranking on Google",
+      "pitch": "Full business site + Google SEO + review management"
+    },
+    {
+      "name": "Cleaning Services",
+      "priority": 2,
+      "avgDealSize": 800,
+      "retainerPotential": 300,
+      "searchTerms": ["cleaning service", "house cleaning", "commercial cleaning", "janitorial"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Oakville"],
+      "pain": "No booking system, manually managing schedules, invisible on Google",
+      "pitch": "Digital Storefront + booking integration + Google Business"
+    },
+    {
+      "name": "Auto Detailing",
+      "priority": 3,
+      "avgDealSize": 600,
+      "retainerPotential": 250,
+      "searchTerms": ["auto detailing", "car detailing", "mobile detailing", "car wash"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Hamilton"],
+      "pain": "Instagram-only presence, no booking, losing customers who search Google",
+      "pitch": "Digital Storefront + before/after gallery + booking"
+    },
+    {
+      "name": "Immigration Consultants",
+      "priority": 2,
+      "avgDealSize": 2500,
+      "retainerPotential": 500,
+      "searchTerms": ["immigration consultant", "immigration services", "visa consultant"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Markham"],
+      "pain": "Trust deficit without professional website, need multilingual support",
+      "pitch": "Full business site + multilingual + client portal + SEO"
+    },
+    {
+      "name": "Driving Schools",
+      "priority": 3,
+      "avgDealSize": 1200,
+      "retainerPotential": 300,
+      "searchTerms": ["driving school", "driving instructor", "G2 lessons", "driving lessons"],
+      "cities": ["Brampton", "Mississauga", "Toronto", "Hamilton"],
+      "pain": "Outdated websites, no online scheduling, competing against branded chains",
+      "pitch": "Full site + online booking + package pricing display + Google reviews"
+    },
+    {
+      "name": "Tutoring Services",
+      "priority": 3,
+      "avgDealSize": 800,
+      "retainerPotential": 250,
+      "searchTerms": ["tutoring", "tutor", "math tutor", "science tutor", "SAT prep"],
+      "cities": ["Brampton", "Mississauga", "Waterloo", "Markham"],
+      "pain": "Running off Kijiji ads and Facebook posts, no credibility markers",
+      "pitch": "Digital Storefront + testimonials + booking + subject pages for SEO"
+    }
+  ]
+}

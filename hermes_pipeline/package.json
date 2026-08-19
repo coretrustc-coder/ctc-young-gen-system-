@@ -1,0 +1,16 @@
+{
+  "name": "coretrust-hermes-system",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "CoreTrust multi-agent AI pipeline — Anthropic API bridge",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "dev": "node --watch api/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0"
+  }
+}

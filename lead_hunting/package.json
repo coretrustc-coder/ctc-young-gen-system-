@@ -1,0 +1,19 @@
+{
+  "name": "coretrust-lead-hunting",
+  "version": "1.0.0",
+  "description": "CoreTrust web/app dev client acquisition system",
+  "type": "module",
+  "scripts": {
+    "scrape:maps": "node scrapers/google-maps.js",
+    "monitor:reddit": "node scrapers/reddit-monitor.js",
+    "export:leads": "echo 'Export leads from data/leads.csv'"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cheerio": "^1.0.0",
+    "csv-writer": "^1.6.0",
+    "snoowrap": "^1.23.0",
+    "dotenv": "^16.4.0",
+    "p-queue": "^8.0.0"
+  }
+}
